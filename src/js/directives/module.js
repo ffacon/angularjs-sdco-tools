@@ -1,0 +1,1 @@
+angular.module('sdco-tools.directives', ['ui.bootstrap', 'sdco-tools.services']);
