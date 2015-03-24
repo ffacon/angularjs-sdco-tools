@@ -38,7 +38,7 @@ angular.module('sdco-tools.directives')
 				[
 					{
 						label: 'jsFiddle',
-						selected: $scope.jsFiddle,
+						selected: $scope.isFiddle(),
 						select: function(){$scope.jsFiddle=true;},
 						deselect: function(){$scope.jsFiddle= false;}
 					}
@@ -70,10 +70,12 @@ angular.module('sdco-tools.directives')
 		var tabScopes= $scope.tabScopes= [];
 
 		//Make some scope attributes as boolean instead of strings
-		$scope.compileOnDemand= ($scope.compileOnDemand == 'true');
-		$scope.jsFiddle= ($scope.jsFiddle == 'true');
-		$scope.readOnly= ($scope.readOnly == 'true');
-		$scope.displayTitle= ($scope.displayTitle == 'true');
+		//TODO: correct his because replaced by strings
+
+		// $scope.compileOnDemand= ($scope.compileOnDemand == 'true');
+		// $scope.jsFiddle= ($scope.jsFiddle == 'true');
+		// $scope.readOnly= ($scope.readOnly == 'true');
+		// $scope.displayTitle= ($scope.displayTitle == 'true');
 
 		var urlInd= 0;
 
@@ -164,6 +166,10 @@ angular.module('sdco-tools.directives')
 			$scope.confirmPreview= true;
 		};
 
+		$scope.isFiddle= function(){
+			return ($scope.jsFiddle==='true' || $scope.jsFiddle===true);
+		};
+
 		$scope.selectTab= function(tabScope){
 			angular.forEach(tabScopes, function(value, index){
 				value.selected= false;
@@ -173,7 +179,7 @@ angular.module('sdco-tools.directives')
 
 		$scope.needPreview= function(){
 			return ( $scope.compile==true && $scope.confirmPreview );
-		}
+		};
 	};
 }])
 /**
@@ -234,7 +240,7 @@ angular.module('sdco-tools.directives')
 						</li> \
 					</ul> \
 					<ul class="functions-wrapper"> \
-						<li ng-if="jsFiddle"> \
+						<li ng-if="isFiddle()"> \
 							<sdco-js-fiddle fwk="AngularJS" version="1.2" title="test" desc="test" data="contents" /> \
 						</li> \
 						<li ng-if="compile && compileOnDemand"> \
