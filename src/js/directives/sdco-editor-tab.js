@@ -49,7 +49,7 @@ angular.module('sdco-tools.directives')
 			);
 
 			if ($scope.type == 'html'){
-				editorCtrl.setPreview();
+				editorCtrl.confirmPreview();
 			}
 
 			if (!readOnly){

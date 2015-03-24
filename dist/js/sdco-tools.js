@@ -80,7 +80,7 @@ angular.module('sdco-tools.directives')
 			);
 
 			if ($scope.type == 'html'){
-				editorCtrl.setPreview();
+				editorCtrl.confirmPreview();
 			}
 
 			if (!readOnly){
@@ -254,12 +254,12 @@ angular.module('sdco-tools.directives')
 			tabScopes.push(tabScope);
 		};
 
-		this.setPreview= function(){
-			$scope.showPreview= true;
-		};
-
 		this.getScope= function(){
 			return $scope;
+		};
+
+		this.confirmPreview= function(){
+			$scope.confirmPreview= true;
 		};
 
 		$scope.selectTab= function(tabScope){
@@ -268,6 +268,10 @@ angular.module('sdco-tools.directives')
 			});
 			tabScope.selected=true;
 		};
+
+		$scope.needPreview= function(){
+			return ( $scope.compile==true && $scope.confirmPreview );
+		}
 	};
 }])
 /**
@@ -313,7 +317,7 @@ angular.module('sdco-tools.directives')
 			template: '\
 				<section class="editor-wrapper" ng-style="wrapperStyle"> \
 					<h1 ng-if="displayTitle">dynamic editor</h1> \
-					<div class="editor-preview-wrapper" ng-show="showPreview"> \
+					<div class="editor-preview-wrapper" ng-show="needPreview()"> \
 						<h2><span>preview</span></h2> \
 						<div ng-include src="htmlTemplateUrl" onload="htmlProcessed=true;" /> \
 					</div> \

@@ -86,7 +86,8 @@ gulp.task('test-e2e', ['webdriver_update', 'express'],  function(cb){
 
   //Check files to test
   var filesToTest= myUtils.getFilesForPatterns(e2eJsGlobs);
-  if (!filesToTest){
+  if (filesToTest===undefined || filesToTest.length===0){
+    server.close();
     cb();
     return;
   }

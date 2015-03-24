@@ -17,7 +17,7 @@ describe('Directive sdcoEditorTab', function(){
 				this.getNbEditors= jasmine.createSpy('getNbEditors')
 				.and.callFake(function(){return 1;});
 				this.addTabScope= jasmine.createSpy('addTabScope');
-				this.setPreview= jasmine.createSpy('setPreview');
+				this.confirmPreview= jasmine.createSpy('confirmPreview');
 				this.getScope= jasmine.createSpy('getScope')
 				.and.callFake(function(){return {readOnly: true};});
 			}
