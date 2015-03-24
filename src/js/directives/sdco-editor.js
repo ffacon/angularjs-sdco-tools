@@ -9,7 +9,7 @@ angular.module('sdco-tools.directives')
 		$scope.checkAndProcessContent= function(){
 
 			$scope.contents= sdcoEditorService.run();				
-			if (!$scope.compile || $scope.compileOnDemand){
+			if (!$scope.compile || $scope.isCompileOnDemand()){
 				return;
 			}
 
