@@ -50,7 +50,7 @@ angular.module('sdco-tools.directives')
 					settingsMenu.push(
 						{
 							label: 'compile on demand',
-							selected: $scope.compileOnDemand,
+							selected: $scope.isCompileOnDemand(),
 							select: function(){$scope.compileOnDemand=true;},
 							deselect: function(){$scope.compileOnDemand=false;}
 						}
@@ -170,6 +170,10 @@ angular.module('sdco-tools.directives')
 			return ($scope.jsFiddle==='true' || $scope.jsFiddle===true);
 		};
 
+		$scope.isCompileOnDemand= function(){
+			return ($scope.compileOnDemand==='true' || $scope.compileOnDemand===true);
+		};		
+
 		$scope.selectTab= function(tabScope){
 			angular.forEach(tabScopes, function(value, index){
 				value.selected= false;
@@ -243,7 +247,7 @@ angular.module('sdco-tools.directives')
 						<li ng-if="isFiddle()"> \
 							<sdco-js-fiddle fwk="AngularJS" version="1.2" title="test" desc="test" data="contents" /> \
 						</li> \
-						<li ng-if="compile && compileOnDemand"> \
+						<li ng-if="compile && isCompileOnDemand()"> \
 							<a href="" class="compile-on-demand" ng-click="processEditorsContent()"></a> \
 						</li> \
 						<li> \
