@@ -47,9 +47,9 @@ angular.module('sdco-tools.directives')
 			> \
 				<a href=""></a> \
 				<div ng-show="false"> \
-					<input type="text" name="html" ng-model="data.html" > \
-					<input type="text" name="js" ng-model="data.javascript" > \
-					<input type="text" name="css" ng-model="data.css" > \
+					<textarea type="text" name="html" ng-model="data.html" ng-trim="false" ></textarea> \
+					<textarea type="text" name="js" ng-model="data.javascript" ng-trim="false" ></textarea> \
+					<textarea type="text" name="css" ng-model="data.css" ng-trim="false" ></textarea> \
 				</div> \
 				<input type="text" name="title" ng-model="title" ng-show="false" ng-if="title"> \
 				<input type="text" name="description" ng-model="desc" ng-show="false" ng-if="desc"> \

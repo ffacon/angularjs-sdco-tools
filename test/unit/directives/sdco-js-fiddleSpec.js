@@ -53,11 +53,11 @@ describe('Directive sdcoJsFiddle', function(){
 
 	it('Check data is set', function(){
 
-		expect(element.find('input[name="html"]').val()).toBe(scope.fiddleData.html);
-		expect(element.find('input[name="js"]').val()).toBe(scope.fiddleData.javascript);
-		expect(element.find('input[name="css"]').val()).toBe(scope.fiddleData.css);
-		expect(element.find('input[name="title"]').val()).toBe(directiveAttributes.title);
-		expect(element.find('input[name="description"]').val()).toBe(directiveAttributes.desc);
+		expect(element.find('textarea[name=html]').val()).toBe(scope.fiddleData.html);
+		expect(element.find('textarea[name=js]').val()).toBe(scope.fiddleData.javascript);
+		expect(element.find('textarea[name=css]').val()).toBe(scope.fiddleData.css);
+		expect(element.find('input[name=title]').val()).toBe(directiveAttributes.title);
+		expect(element.find('input[name=description]').val()).toBe(directiveAttributes.desc);
 
 	});
 

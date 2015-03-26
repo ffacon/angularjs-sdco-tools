@@ -170,9 +170,9 @@ angular.module('sdco-tools.services')
 				});
 
 				return{
-					javascript: ( javascript.trim().length>0? javascript: undefined ),
-					html: html.trim(),
-					css: css.trim()
+					javascript: javascript,
+					html: html,
+					css: css
 				};
 			};
 	};
