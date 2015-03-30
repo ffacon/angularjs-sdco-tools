@@ -79,21 +79,25 @@ angular.module('sdco-tools.directives')
 
 		var urlInd= 0;
 
+		$scope.preprocess= function(){
+			$scope.contents= sdcoEditorService.run();
+		};
+
 		$scope.processHtml= function(){
-			contents= $scope.contents= sdcoEditorService.run();
-			if (contents.html !== undefined){
+			
+			if ($scope.contents.html !== undefined){
 				urlInd= (urlInd+1)%2;
 				//we need to change the template url for ng-include to reevaluate it
 				var htmlTemplateUrl= 'contents' + urlInd + '.html';
 				//we also need to update our template definition
-				$templateCache.put(htmlTemplateUrl, contents.html);
+				$templateCache.put(htmlTemplateUrl, $scope.contents.html);
 				//then update scope to apply modifs
 				$scope.htmlTemplateUrl= htmlTemplateUrl;
 			}
 		};
 
 		$scope.processCss= function(){
-			if (contents.css !== undefined){
+			if ($scope.contents.css !== undefined){
 				var styleTagId= 'dynamicEditorStyles';
 				var styleTag= angular.element(document.querySelector('#' + styleTagId));
 				if (styleTag.length === 0){
@@ -103,13 +107,13 @@ angular.module('sdco-tools.directives')
 					angular.element(document.querySelector('head')).append(styleTag);
 				}
 
-				styleTag.text(contents.css);
+				styleTag.text($scope.contents.css);
 			}
 		};
 
 		$scope.processJs= function(){
 
-			if (contents.javascript){
+			if ($scope.contents.javascript){
 				var jsTagId= 'dynamicEditorJs';
 				var jsTag= angular.element(document.querySelector('#' + jsTagId));
 				if (jsTag.length !== 0){
@@ -120,13 +124,14 @@ angular.module('sdco-tools.directives')
 				.attr('type', 'text/javascript')
 				.attr('id', jsTagId);
 				angular.element(document.querySelector('body')).append(jsTag);
-				jsTag.text(contents.javascript);							
+				jsTag.text($scope.contents.javascript);							
 			}
 		};
 
 
 		this.processEditorsContent= $scope.processEditorsContent= function(){
-			if ($scope.compile){
+
+			var processHtmlFirst= function(){
 				$scope.htmlProcessed= false;
 				// ProcessHtml will update the
 				// scope used by ngInclude, 
@@ -143,7 +148,25 @@ angular.module('sdco-tools.directives')
 					});
 				}else{
 					$scope.processJs();
+				}				
+
+			};
+
+			var processJsFirst= function(){
+				$scope.processJs();
+				$scope.processHtml();
+				$scope.processCss();
+			};
+
+			if ($scope.compile){
+
+				$scope.preprocess();
+				if ($scope.compileJsFirst === true){
+					processJsFirst();
+				}else{
+					processHtmlFirst();
 				}
+
 			}
 		};
 
@@ -182,7 +205,7 @@ angular.module('sdco-tools.directives')
 		};
 
 		$scope.needPreview= function(){
-			return ( $scope.compile==true && $scope.confirmPreview );
+			return ( $scope.compile===true && $scope.confirmPreview );
 		};
 	};
 }])
@@ -199,6 +222,10 @@ angular.module('sdco-tools.directives')
  * @param {boolean=} compile: specify if the editor content can be processed.
  * In such a case, a preview zone will be displayed at top of the editor.
  * The compilation behavior also depends on the compileOnDemand value.
+ *
+ * @param {boolean=} compileJsFirst: By default, when compile is true, html is processed
+ * first, then js is executed. In some specific cases, you can specify that js has to be 
+ * firstexecuted 
  *
  * @param {boolean@} compileOnDemand: if set to true, compilation will be done
  * only when asked (with the play button). Otherwise, it is done each time the
@@ -219,6 +246,7 @@ angular.module('sdco-tools.directives')
 			replace:true,
 			scope:{
 				compile: '=',
+				compileJsFirst: '@?',
 				compileOnDemand:'@',
 				readOnly:'@',
 				width: '@',
