@@ -259,7 +259,7 @@ angular.module('sdco-tools.directives')
 			if ($scope.compile){
 
 				$scope.preprocess();
-				if ($scope.compileJsFirst === true){
+				if ($scope.compileJsFirst === 'true'){
 					processJsFirst();
 				}else{
 					processHtmlFirst();
