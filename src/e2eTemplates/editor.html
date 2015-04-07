@@ -11,14 +11,17 @@
 
 		<!-- view1 -->
 		<script type="text/ng-template" id="view1.html">
-			<sdco-editor compile-on-demand="true" compile="true" width="800px" height="300px" js-fiddle="false">
+			<sdco-editor compile="true" compile-on-demand="true" width="800px" height="300px" js-fiddle="false">
 				<sdco-editor-tab type="html" heading="sample.html">
-					&lt;p id="afterCompile"&gt;text&lt;/p&gt;
+&lt;div&gt;
+{{'toto' | myFilter}}
+&lt;p id="afterCompile"&gt;text&lt;/p&gt;
+&lt;/div&gt;
 				</sdco-editor-tab>
 				<sdco-editor-tab type="javascript" heading="sample.js">
-					document.getElementById('afterCompile').innerText='modified';
+document.getElementById('afterCompile').innerText='modified';
 				</sdco-editor-tab>
-			</sdco-editor>
+			</sdco-editor>			
 		</script>
 
 		<!-- view1 -->
