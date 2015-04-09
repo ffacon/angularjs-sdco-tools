@@ -50,9 +50,8 @@ describe('service sdco-notes', function(){
 
 
     it('Check click call modal', function(){
-
-        directiveElement.find('button').click();
-        var arg= mockModal.open.calls.mostRecent().args[0];
+        directiveElement.click();
+        //var arg= mockModal.open.calls.mostRecent().args[0];
         expect(mockModal.open).toHaveBeenCalled();
     });
 });

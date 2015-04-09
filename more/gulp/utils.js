@@ -17,7 +17,7 @@ module.exports={
 
 	getServer: function(){
 	  return http.createServer(express()
-	  	.use(logger())
+	  	//.use(logger())
 	    .use(express.static(baseProject + '/src/'))
 	    .use(express.static(baseProject + '/bower_components/'))
 	  );

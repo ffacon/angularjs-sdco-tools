@@ -14,16 +14,14 @@ angular.module('sdco-tools.directives')
 		return{
 			restrict: 'E',
 			transclude: true,
+			replace: true,
 			scope:{},
-			template:'\
-				<button class="local-note" ng-click="open()"> \
-				<div ng-show="false" ng-transclude /> \
-			',
+			template:'<button class="local-note" ng-click="open()" ng-transclude></button>',
 			link:function(scope, element, attrs){
 
 				scope.noteData=sdcoNotesService.getNote();
 
-				var transcludeElt= angular.element(element[0].querySelector('div[ng-transclude]'));
+				var transcludeElt= element;
 				var modalContent= transcludeElt.html();
 				//remove transcluded content
 				transcludeElt.contents().remove();
@@ -34,8 +32,8 @@ angular.module('sdco-tools.directives')
 								'<div class="modal-body">' +
 									'<p>' + modalContent + '</p>' +
 								'<h2>Your notes</h2>' + 
-								'<textarea ng-model="noteData.note" rows="10" style="width:100%;" />' +
-								'<input type="submit" ng-click="saveNote()" value="save" />' +
+								'<textarea ng-model="noteData.note" rows="10" style="width:100%;" ></textarea>' +
+								'<button ng-click="saveNote()">save</button>' +
 								'</div> ' +
 							'</div>';
 				};

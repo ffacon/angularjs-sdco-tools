@@ -81,9 +81,6 @@ section.editor-wrapper > ul.functions-wrapper a.compile-on-demand{
 }
 
 
-
-
-
 /* EDTOR OPTIONS */
 
 section.editor-wrapper a.main-menu{
@@ -165,7 +162,7 @@ section.menu-options ul.menu-settings {
 				}				
 
 
-/* PREVIEW */
+/* EDITOR PREVIEW */
 section .editor-preview-wrapper > h2 {
     overflow: hidden;
     text-align: center;
@@ -195,3 +192,24 @@ section .editor-preview-wrapper > h2:after {
 	border: solid 1px black;
 	font-size: large;
 }
+
+
+/* NOTES */
+button.main-note, button.local-note{
+	background-image: url("../imgs/icon-note.png");
+	background-size: contain;
+	width: 1em;
+	height: 1em;
+	border: none;
+	background-color: transparent;
+	background-repeat: no-repeat;
+}
+
+button.main-note{
+	float: right;
+	-webkit-filter: hue-rotate(100deg);
+	-moz-filter: hue-rotate(100deg);
+	-ms-filter: hue-rotate(100deg);
+	filter: hue-rotate(100deg);
+}
+

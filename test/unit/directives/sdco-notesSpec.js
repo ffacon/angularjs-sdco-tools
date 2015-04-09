@@ -60,7 +60,7 @@ describe('service sdco-notes', function(){
     it('Check click call modal', function(){
 
         // tuUtils.click(directiveElement);
-        directiveElement.find('button').click();
+        directiveElement.click();
         var arg= mockModal.open.calls.mostRecent().args[0];
         expect(arg.template).toContain(content);
     });

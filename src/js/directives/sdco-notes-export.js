@@ -4,34 +4,55 @@ angular.module('sdco-tools.directives')
 
 		var exportController= function($scope, $modalInstance){
 
-			$scope.notes= JSON.stringify(sdcoNotesService.exportNotes());
+			//ALL VIEWS NOTES
+			$scope.getAllNotes= function(){
+				$scope.allNotes= JSON.stringify(sdcoNotesService.exportNotes());
+			};
 
 			$scope.saveNotes= function(){
-				sdcoNotesService.importNotes(JSON.parse($scope.notes));
+				sdcoNotesService.importNotes(JSON.parse($scope.allNotes));
+			};
+
+			//GLOBAL NOTE
+			$scope.globalNote= sdcoNotesService.getGlobalNote();
+			$scope.saveGlobalNote= function(){
+				sdcoNotesService.saveNote($scope.globalNote);
 			};
 		};
 
 		return{
 			restrict: 'E',
 			scope:{},
-			template:'\
-				<button class="main-note" ng-click="open()" /> \
-			',
+			replace: true,
+			template:'<button class="main-note" ng-click="open()" ></button>',
 			link:function(scope, element, attrs){
 
 
 				var getModalTemplate= function(){
 					return '<div style="font-size: small;">' + 
-								'<div class="modal-header"> All Notes </div>' +
-								'<div class="modal-body">' +
-								'<p> Copy this content in a file to save your comments or ' +
-								'replace the content with your one to update all the notes </p>' +
-								'<h2>Your notes</h2>' + 
-								'<textarea ng-model="notes" rows="10" style="width:100%;" >' +
-								'</textarea>' +
-								'<input type="submit" ng-click="saveNotes()" value="save" />' +
-								'</div> \
-							</div>';
+							'	<tabset>' +
+							'		<tab heading="Your notes">' +
+							'			<div class=	"modal-header"> Your Notes </div>' +
+							'			<div class="modal-body">' +
+							'			<p> Copy this content in a file to save your comments or ' +
+							'			replace the content with your one to update all the notes </p>' +
+							'			<h2>Your notes</h2>' + 
+							'			<textarea ng-model="globalNote.note" rows="10" style="width:100%;" >' +
+							'			</textarea>' +
+							'			<input type="submit" ng-click="saveGlobalNote()" value="save" />' +
+							'			</div> ' +
+							'		</tab>' +
+							'		<tab heading="all notes" select="getAllNotes()">' +
+							'			<div class=	"modal-header"> All Notes </div>' +
+							'			<div class="modal-body">' +
+							'			<p> Set your global notes here </p>' +
+							'			<h2>Your notes</h2>' + 
+							'			<textarea ng-model="allNotes" rows="10" style="width:100%;" >' +
+							'			</textarea>' +
+							'			<input type="submit" ng-click="saveNotes()" value="save" />' +
+							'			</div> ' +
+							'		</tab>' +
+							'</div>';
 				};
 
 				scope.open= function(){
