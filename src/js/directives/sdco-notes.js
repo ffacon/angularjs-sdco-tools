@@ -46,7 +46,7 @@ angular.module('sdco-tools.directives')
 				scope.open= function(){
 					$modal.open({
 						template:getModalTemplate(),
-						controller: notesController,
+						controller: ['$scope', '$modalInstance', notesController],
 						resolve: {
 							noteData: function(){
 								return scope.noteData;

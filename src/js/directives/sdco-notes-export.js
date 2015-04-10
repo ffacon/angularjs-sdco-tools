@@ -65,7 +65,7 @@ angular.module('sdco-tools.directives')
 				scope.open= function(){
 					$modal.open({
 						template:getModalTemplate(),
-						controller: exportController
+						controller: ['$scope', '$modalInstance', exportController]
 					});
 				};
 			}
