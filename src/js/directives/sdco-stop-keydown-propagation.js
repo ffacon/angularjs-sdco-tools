@@ -5,7 +5,6 @@ angular.module('sdco-tools.directives')
 		link: function($scope, $element, $attrs){
 
 			$element.on('keydown', function(e){
-				console.log('stoped');
 				e.stopPropagation();
 			});
 		}
