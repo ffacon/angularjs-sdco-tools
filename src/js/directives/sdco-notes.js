@@ -9,6 +9,10 @@ angular.module('sdco-tools.directives')
 			$scope.saveNote= function(){
 				sdcoNotesService.saveNote($scope.noteData);
 			};
+
+			$scope.close= function(){
+				$modalInstance.dismiss('cancel');
+			};			
 		};
 
 		return{
@@ -27,13 +31,14 @@ angular.module('sdco-tools.directives')
 				transcludeElt.contents().remove();
 
 				var getModalTemplate= function(){
-					return '<div style="font-size: small;"> ' +
+					return '<div sdco-stop-keydown-propagation style="font-size: small;"> ' +
 								'<div class="modal-header"> Notes </div> ' +
 								'<div class="modal-body">' +
 									'<p>' + modalContent + '</p>' +
 								'<h2>Your notes</h2>' + 
 								'<textarea ng-model="noteData.note" rows="10" style="width:100%;" ></textarea>' +
 								'<button ng-click="saveNote()">save</button>' +
+								'<button ng-click="close()">close</button>' +
 								'</div> ' +
 							'</div>';
 				};

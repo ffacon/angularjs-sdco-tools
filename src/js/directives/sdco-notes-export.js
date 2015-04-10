@@ -18,6 +18,10 @@ angular.module('sdco-tools.directives')
 			$scope.saveGlobalNote= function(){
 				sdcoNotesService.saveNote($scope.globalNote);
 			};
+
+			$scope.close= function(){
+				$modalInstance.dismiss('cancel');
+			};
 		};
 
 		return{
@@ -29,7 +33,7 @@ angular.module('sdco-tools.directives')
 
 
 				var getModalTemplate= function(){
-					return '<div style="font-size: small;">' + 
+					return '<div sdco-stop-keydown-propagation style="font-size: small;">' + 
 							'	<tabset>' +
 							'		<tab heading="Your notes">' +
 							'			<div class=	"modal-header"> Your Notes </div>' +
@@ -40,6 +44,7 @@ angular.module('sdco-tools.directives')
 							'			<textarea ng-model="globalNote.note" rows="10" style="width:100%;" >' +
 							'			</textarea>' +
 							'			<input type="submit" ng-click="saveGlobalNote()" value="save" />' +
+							'			<button ng-click="close()">close</button> ' +
 							'			</div> ' +
 							'		</tab>' +
 							'		<tab heading="all notes" select="getAllNotes()">' +
@@ -50,8 +55,10 @@ angular.module('sdco-tools.directives')
 							'			<textarea ng-model="allNotes" rows="10" style="width:100%;" >' +
 							'			</textarea>' +
 							'			<input type="submit" ng-click="saveNotes()" value="save" />' +
+							'			<button ng-click="close()">close</button> ' +
 							'			</div> ' +
 							'		</tab>' +
+							'	</tabset>' +
 							'</div>';
 				};
 
