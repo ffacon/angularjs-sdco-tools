@@ -13,6 +13,7 @@ var gulp= require('gulp'),
   addSrc= require('gulp-add-src'),
   gfilter= require('gulp-filter'),
   rename= require('gulp-rename'),
+  gheader= require('gulp-header'),
   protractor= require('gulp-protractor').protractor,
   webdriver_standalone = require('gulp-protractor').webdriver_standalone,
   webdriver_update = require('gulp-protractor').webdriver_update,
@@ -124,8 +125,10 @@ gulp.task('minifyJs', ['prebuild', 'clean'],  function(){
 
   gulp.src(appJsGlobs) 
   .pipe(concat( targetAppName + '.js'))
+  .pipe(gheader(myUtils.getHeaders()))
   .pipe(gulp.dest('./' + target + '/js/')) //not minified
   .pipe(uglify())
+  .pipe(gheader(myUtils.getHeaders()))
   .pipe(rename(targetAppName + '-min.js'))
   .pipe(gulp.dest('./' + target + '/js/')); //minified
 
@@ -135,8 +138,10 @@ gulp.task('minifyCss',['prebuild', 'clean'],  function(){
 
   gulp.src(appCssGlobs)
   .pipe(concat(targetAppName + '.css'))
+  .pipe(gheader(myUtils.getHeaders()))
   .pipe(gulp.dest('./' + target + '/styles/'))
   .pipe(cssmin())
+  .pipe(gheader(myUtils.getHeaders()))
   .pipe(rename(targetAppName + '-min.css'))
   .pipe(gulp.dest('./' + target + '/styles/'));
 

@@ -1,3 +1,7 @@
+/* Author: Legrand Régis<regis.legrand@worldline.com> */
+/* Version: 1.0.0-SNAPSHOT */
+
+
 angular.module('sdco-tools', [
 	'sdco-tools.directives', 'sdco-tools.services',
 	'ngSanitize', 'ui.bootstrap'

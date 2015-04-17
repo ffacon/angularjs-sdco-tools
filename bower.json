@@ -1,6 +1,6 @@
 {
-  "name": "sdco-tools",
-  "version": "1.0.0",
+  "name": "angular-sdco-tools",
+  "version": "1.0.0-SNAPSHOT",
   "main": [
     "./dist/js/sdco-tools.js", 
     "./dist/styles/sdco-tools.css", 
