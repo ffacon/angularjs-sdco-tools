@@ -25,7 +25,6 @@
     "gulp-bower-files": "0.2.7",
     "gulp-add-src":"0.2.0",
     "gulp-filter": "1.0.2",
-    "gulp-filter": "1.0.2",
     "gulp-header":"1.2.2",
     "jasmine-core": "2.1.2",
     "jasmine-reporters":"1.0.1",

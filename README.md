@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # sdco-tools
 
 ## Description
@@ -28,3 +29,6 @@
 
 *TODO*
 
+=======
+# angularjs-sdco-tools
+>>>>>>> 04e685342901065220fea2b87649af634211aa3e
