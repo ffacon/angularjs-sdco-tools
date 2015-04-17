@@ -1,10 +1,8 @@
 angular.module('sdco-tools.directives')
-.directive('sdcoNotes',[ '$log', '$modal', 'sdcoNotesService',
-	function($log, $modal, sdcoNotesService){
+.directive('sdcoNotes',[ '$log', '$modal', '$rootScope', 'sdcoNotesService',
+	function($log, $modal, $rootScope, sdcoNotesService){
 
-		var notesController= function($scope, $modalInstance, noteData){
-
-			$scope.noteData= noteData;
+		var notesController= function($scope, $modalInstance){
 			
 			$scope.saveNote= function(){
 				sdcoNotesService.saveNote($scope.noteData);
@@ -46,12 +44,13 @@ angular.module('sdco-tools.directives')
 				scope.open= function(){
 					$modal.open({
 						template:getModalTemplate(),
-						controller: ['$scope', '$modalInstance', notesController],
-						resolve: {
-							noteData: function(){
-								return scope.noteData;
-							}
-          				}
+						scope: function(){
+							var newScope= $rootScope.$new();
+							newScope.noteData= scope.noteData;
+							return newScope;
+						}(),
+
+						controller: notesController,
 					});
 				};
 			}

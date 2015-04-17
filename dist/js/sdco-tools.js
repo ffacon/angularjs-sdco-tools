@@ -2,313 +2,6 @@ angular.module('sdco-tools', [
 	'sdco-tools.directives', 'sdco-tools.services',
 	'ngSanitize', 'ui.bootstrap'
 ]);
-angular.module('sdco-tools.services', ['ngSanitize']);
-
-/**
-* @ngdoc service
-* @name codeMirrorService
-* 
-* @description
-* used by editors directives to get/sort data.
-* Can also be used by your app to store data in
-* the DOM or the localStorage
-*/
-angular.module('sdco-tools.services')
-.provider('sdcoEditorService', function(){
-
-	this.isStorageActive= false;
-
-	var editorServiceImpl= function($log, $location, $rootScope, isStorageActive){
-
-			var installedEditors={};
-
-			var getStoreKey= function(value){
-				return 'sdcoEditor' + value;
-			};
-
-			var getJsonDesc= function(){ 
-
-				var res= [];
-
-				angular.forEach(installedEditors, function(currentEditor, index){
-
-					var currentMode= currentEditor.getOption('mode');
-					var currentContent= currentEditor.getValue();
-
-					res.push({id: index, content: currentContent});
-				});
-
-				return res;
-			};
-
-
-			/**
-			* @ngdoc method
-			* @name codeMirrorService#toDom
-			* @param {element} element the element to use to store the editor contents
-			* @param {boolean} [hide=true] should the element be hidden
-			* 
-			* @description
-			* Store the editor tabs content in the DOM
-			* This can be usefull when, for example, you go back to
-			* a view which has already been cached
-			*/
-			var activateStateSaving= function(){
-				$rootScope.$on('$locationChangeStart', function(event, next, current){
-					var storeKey= getStoreKey(current);
-					angular.element(document.querySelector('body')).data(storeKey, getJsonDesc());
-					installedEditors= {};
-				});
-			};
-
-			//Do we need to activate auto saving
-			if (isStorageActive){
-				activateStateSaving();
-			}			
-
-
-			var getPreviousState= function(){
-				var storeKey= getStoreKey($location.absUrl());
-				return angular.element(document.querySelector('body')).data(storeKey);
-			};
-
-			/**
-			* @ngdoc method
-			* @name codeMirrorService#fromDom
-			* @param {element} element the element to use to retrieve the editor contents
-			* @param {boolean} [removeContent=true] should the element content be removed
-			* 
-			* @description
-			* Retrieve the editor tabs content from the DOM
-			* This can be usefull when, for example, you go back to
-			* a view which has already been cached
-			*/
-			this.installEditor= function(theElement, content, type, id, readOnly)
-			{
-				//Check if an instance exists
-				if (isStorageActive){
-					var previousState= getPreviousState();
-					var storedContent= previousState && previousState[id] && previousState[id].content;
-					if (storedContent){ 
-						content= storedContent;
-					}
-				}
-
-				//Otherwise install new instance
-				var options= {
-					value: content,
-					mode:{},
-					lineNumbers:'true',
-					theme:'eclipse',
-					lineWrapping: true,
-					readOnly: readOnly
-				};
-
-				switch(type){
-					case 'javascript':
-						options.mode.name='javascript';
-					break;
-					case 'html':
-						options.mode.name='xml';
-						options.htmlMode= true;
-					break;
-					case 'css':
-						options.mode.name='css';
-					break;
-					default://TODO
-					break;
-				}
-
-				editor= CodeMirror(theElement, options);
-
-				//Stop keydown events propagation
-				angular.element(editor.getWrapperElement()).on('keydown',function(e){
-					e.stopPropagation();
-				});
-
-				installedEditors[id]= editor;
-
-				return editor;
-			};
-
-			this.getInstalledEditors= function(){
-				return installedEditors;
-			};
-
-			this.setInstalledEditors= function(editors){
-				installedEditors= editors;
-			};
-
-			this.removeEditor= function(editor){
-				var that= this;
-				angular.forEach(installedEditors, function(currentEditor, index){
-					if (editor == currentEditor){
-						angular.element(editor.getWrapperElement()).remove();
-						delete installedEditors[index];
-						return false;
-					}
-				});
-
-			};
-
-
-			this.run= function(isAngular){
-
-				var that= this;
-
-				//Returns data by type
-				var javascript='', html='', css='';
-				angular.forEach(installedEditors, function(currentEditor, index){
-
-					var currentMode= currentEditor.getOption('mode');
-					var isHtml= currentEditor.getOption('htmlMode');
-
-
-					if (currentMode.name == 'javascript'){
-						javascript+= currentEditor.getValue();
-					}
-					else if (currentMode.name == 'css'){
-						css+= currentEditor.getValue();
-					}
-					else if (currentMode.name == 'xml' && isHtml ){
-						html+= currentEditor.getValue();
-					}
-				});
-
-				return{
-					javascript: javascript,
-					html: html,
-					css: css
-				};
-			};
-	};
-
-
-
-	//Get the service
-	this.$get=['$log', '$location', '$rootScope', 
-		function($log, $location, $rootScope){
-			return new editorServiceImpl($log, $location, $rootScope, this.isStorageActive);
-		}
-	];
-
-
-});
-angular.module('sdco-tools.services')
-.value('sdcoLocalStorageService', localStorage);
-angular.module('sdco-tools.services')
-.service('sdcoNotesService', ['$rootScope', '$location', 'sdcoLocalStorageService',
- function($rootScope, $location, localStorage){
-
-	this.commonPrefixKey= 'notes_export';
-	this.unitPrefixKey= this.commonPrefixKey + '_unit';
-	this.currentIndice= 0;
-	this.unitMainKey= undefined;
-	this.notes= [];
-	this.globalPrefixKey= this.commonPrefixKey + '_globalNote';
-	this.globalNote= '';
-
-	this.getViewKey= function(){
-		return this.unitPrefixKey + this.unitMainKey;
-	};
-
-
-	this.exportNotes= function(){
-		var res= [];
-		var regex= new RegExp(this.commonPrefixKey, 'i');
-		for(var key in localStorage){
-			var matches= key.match(regex);
-			if (matches){
-				res.push({key:key,note:localStorage[key]});
-			}
-		}
-
-		return res;
-	};
-
-	this.importNotes= function(notes){
-
-		for (var id in notes){
-			var entry= notes[id];
-			localStorage.setItem(entry.key, entry.note);
-			if (entry.key === this.globalPrefixKey){
-				this.globalNote= entry.note;
-			}
-		}
-	};
-
-	this.loadViewNotes= function(){
-		var tmpbfr= [];
-		var regex= new RegExp(this.getViewKey() + '_\\d', 'i');
-		for(var key in localStorage){
-			var matches= key.match(regex);
-			if (matches){
-				var indice= parseInt(matches[0].substring(matches[0].length - 1));
-				tmpbfr.push({id: indice, note:localStorage[key]});
-			}
-		}
-
-		this.notes.length= tmpbfr.length;
-		for(var i in tmpbfr){
-			this.notes[tmpbfr[i].id]= tmpbfr[i].note;
-		}
-	};
-
-	this.loadGlobalNote= function(){
-		//Is it already loaded
-		if (this.globalNote.trim() !== ''){
-			return this.globalNote;
-		}
-		//Retrieve from localStorage
-		else{
-			var globalNote= localStorage[this.globalPrefixKey];
-			if (globalNote){
-				this.globalNote= globalNote;
-			}
-		}
-	};	
-
-
-	/**
-	* Return the indice for the note and the note content
-	*/
-	this.getNote= function(){
-		var res= {id: this.currentIndice, note: this.notes[this.currentIndice]};
-		this.currentIndice++;
-		return res;
-	};
-
-	this.getGlobalNote= function(){
-		return {note: this.globalNote};
-	};
-
-	this.saveNote= function(noteData){
-		//Local note depending on the route
-		if (noteData.id!==undefined){
-			this.notes[noteData.id]= noteData.note;
-			localStorage.setItem(this.getViewKey() + '_' + noteData.id, noteData.note);
-		}
-		//Global note for the app
-		else{
-			this.globalNote= noteData.note;
-			localStorage.setItem(this.globalPrefixKey, noteData.note);
-		}
-	};
-
-	this.init= function(){
-		var that= this;
-		$rootScope.$on('$locationChangeSuccess', function(event, next, current){
-			var viewId= $location.url();
-			that.unitMainKey= viewId;
-			that.currentIndice= 0;
-			that.loadViewNotes();
-			that.loadGlobalNote();
-		});
-	};
-
-	this.init();
-
-}]);
 angular.module('sdco-tools.directives', ['ui.bootstrap', 'sdco-tools.services']);
 angular.module('sdco-tools.directives')
 .directive('sdcoCustomEventActions',[ '$log',
@@ -855,12 +548,10 @@ angular.module('sdco-tools.directives')
 
 ]);
 angular.module('sdco-tools.directives')
-.directive('sdcoNotes',[ '$log', '$modal', 'sdcoNotesService',
-	function($log, $modal, sdcoNotesService){
+.directive('sdcoNotes',[ '$log', '$modal', '$rootScope', 'sdcoNotesService',
+	function($log, $modal, $rootScope, sdcoNotesService){
 
-		var notesController= function($scope, $modalInstance, noteData){
-
-			$scope.noteData= noteData;
+		var notesController= function($scope, $modalInstance){
 			
 			$scope.saveNote= function(){
 				sdcoNotesService.saveNote($scope.noteData);
@@ -902,12 +593,13 @@ angular.module('sdco-tools.directives')
 				scope.open= function(){
 					$modal.open({
 						template:getModalTemplate(),
-						controller: ['$scope', '$modalInstance', notesController],
-						resolve: {
-							noteData: function(){
-								return scope.noteData;
-							}
-          				}
+						scope: function(){
+							var newScope= $rootScope.$new();
+							newScope.noteData= scope.noteData;
+							return newScope;
+						}(),
+
+						controller: notesController,
 					});
 				};
 			}
@@ -998,3 +690,311 @@ angular.module('sdco-tools.directives')
 		}
 	}
 });
+
+angular.module('sdco-tools.services', ['ngSanitize']);
+
+/**
+* @ngdoc service
+* @name codeMirrorService
+* 
+* @description
+* used by editors directives to get/sort data.
+* Can also be used by your app to store data in
+* the DOM or the localStorage
+*/
+angular.module('sdco-tools.services')
+.provider('sdcoEditorService', function(){
+
+	this.isStorageActive= false;
+
+	var editorServiceImpl= function($log, $location, $rootScope, isStorageActive){
+
+			var installedEditors={};
+
+			var getStoreKey= function(value){
+				return 'sdcoEditor' + value;
+			};
+
+			var getJsonDesc= function(){ 
+
+				var res= [];
+
+				angular.forEach(installedEditors, function(currentEditor, index){
+
+					var currentMode= currentEditor.getOption('mode');
+					var currentContent= currentEditor.getValue();
+
+					res.push({id: index, content: currentContent});
+				});
+
+				return res;
+			};
+
+
+			/**
+			* @ngdoc method
+			* @name codeMirrorService#toDom
+			* @param {element} element the element to use to store the editor contents
+			* @param {boolean} [hide=true] should the element be hidden
+			* 
+			* @description
+			* Store the editor tabs content in the DOM
+			* This can be usefull when, for example, you go back to
+			* a view which has already been cached
+			*/
+			var activateStateSaving= function(){
+				$rootScope.$on('$locationChangeStart', function(event, next, current){
+					var storeKey= getStoreKey(current);
+					angular.element(document.querySelector('body')).data(storeKey, getJsonDesc());
+					installedEditors= {};
+				});
+			};
+
+			//Do we need to activate auto saving
+			if (isStorageActive){
+				activateStateSaving();
+			}			
+
+
+			var getPreviousState= function(){
+				var storeKey= getStoreKey($location.absUrl());
+				return angular.element(document.querySelector('body')).data(storeKey);
+			};
+
+			/**
+			* @ngdoc method
+			* @name codeMirrorService#fromDom
+			* @param {element} element the element to use to retrieve the editor contents
+			* @param {boolean} [removeContent=true] should the element content be removed
+			* 
+			* @description
+			* Retrieve the editor tabs content from the DOM
+			* This can be usefull when, for example, you go back to
+			* a view which has already been cached
+			*/
+			this.installEditor= function(theElement, content, type, id, readOnly)
+			{
+				//Check if an instance exists
+				if (isStorageActive){
+					var previousState= getPreviousState();
+					var storedContent= previousState && previousState[id] && previousState[id].content;
+					if (storedContent){ 
+						content= storedContent;
+					}
+				}
+
+				//Otherwise install new instance
+				var options= {
+					value: content,
+					mode:{},
+					lineNumbers:'true',
+					theme:'eclipse',
+					lineWrapping: true,
+					readOnly: readOnly
+				};
+
+				switch(type){
+					case 'javascript':
+						options.mode.name='javascript';
+					break;
+					case 'html':
+						options.mode.name='xml';
+						options.htmlMode= true;
+					break;
+					case 'css':
+						options.mode.name='css';
+					break;
+					default://TODO
+					break;
+				}
+
+				editor= CodeMirror(theElement, options);
+
+				//Stop keydown events propagation
+				angular.element(editor.getWrapperElement()).on('keydown',function(e){
+					e.stopPropagation();
+				});
+
+				installedEditors[id]= editor;
+
+				return editor;
+			};
+
+			this.getInstalledEditors= function(){
+				return installedEditors;
+			};
+
+			this.setInstalledEditors= function(editors){
+				installedEditors= editors;
+			};
+
+			this.removeEditor= function(editor){
+				var that= this;
+				angular.forEach(installedEditors, function(currentEditor, index){
+					if (editor == currentEditor){
+						angular.element(editor.getWrapperElement()).remove();
+						delete installedEditors[index];
+						return false;
+					}
+				});
+
+			};
+
+
+			this.run= function(isAngular){
+
+				var that= this;
+
+				//Returns data by type
+				var javascript='', html='', css='';
+				angular.forEach(installedEditors, function(currentEditor, index){
+
+					var currentMode= currentEditor.getOption('mode');
+					var isHtml= currentEditor.getOption('htmlMode');
+
+
+					if (currentMode.name == 'javascript'){
+						javascript+= currentEditor.getValue();
+					}
+					else if (currentMode.name == 'css'){
+						css+= currentEditor.getValue();
+					}
+					else if (currentMode.name == 'xml' && isHtml ){
+						html+= currentEditor.getValue();
+					}
+				});
+
+				return{
+					javascript: javascript,
+					html: html,
+					css: css
+				};
+			};
+	};
+
+
+
+	//Get the service
+	this.$get=['$log', '$location', '$rootScope', 
+		function($log, $location, $rootScope){
+			return new editorServiceImpl($log, $location, $rootScope, this.isStorageActive);
+		}
+	];
+
+
+});
+angular.module('sdco-tools.services')
+.value('sdcoLocalStorageService', localStorage);
+angular.module('sdco-tools.services')
+.service('sdcoNotesService', ['$rootScope', '$location', 'sdcoLocalStorageService',
+ function($rootScope, $location, localStorage){
+
+	this.commonPrefixKey= 'notes_export';
+	this.unitPrefixKey= this.commonPrefixKey + '_unit';
+	this.currentIndice= 0;
+	this.unitMainKey= undefined;
+	this.notes= [];
+	this.globalPrefixKey= this.commonPrefixKey + '_globalNote';
+	this.globalNote= '';
+
+	this.getViewKey= function(){
+		return this.unitPrefixKey + this.unitMainKey;
+	};
+
+
+	this.exportNotes= function(){
+		var res= [];
+		var regex= new RegExp(this.commonPrefixKey, 'i');
+		for(var key in localStorage){
+			var matches= key.match(regex);
+			if (matches){
+				res.push({key:key,note:localStorage[key]});
+			}
+		}
+
+		return res;
+	};
+
+	this.importNotes= function(notes){
+
+		for (var id in notes){
+			var entry= notes[id];
+			localStorage.setItem(entry.key, entry.note);
+			if (entry.key === this.globalPrefixKey){
+				this.globalNote= entry.note;
+			}
+		}
+	};
+
+	this.loadViewNotes= function(){
+		var tmpbfr= [];
+		var regex= new RegExp(this.getViewKey() + '_\\d', 'i');
+		for(var key in localStorage){
+			var matches= key.match(regex);
+			if (matches){
+				var indice= parseInt(matches[0].substring(matches[0].length - 1));
+				tmpbfr.push({id: indice, note:localStorage[key]});
+			}
+		}
+
+		this.notes.length= tmpbfr.length;
+		for(var i in tmpbfr){
+			this.notes[tmpbfr[i].id]= tmpbfr[i].note;
+		}
+	};
+
+	this.loadGlobalNote= function(){
+		//Is it already loaded
+		if (this.globalNote.trim() !== ''){
+			return this.globalNote;
+		}
+		//Retrieve from localStorage
+		else{
+			var globalNote= localStorage[this.globalPrefixKey];
+			if (globalNote){
+				this.globalNote= globalNote;
+			}
+		}
+	};	
+
+
+	/**
+	* Return the indice for the note and the note content
+	*/
+	this.getNote= function(){
+		var res= {id: this.currentIndice, note: this.notes[this.currentIndice]};
+		this.currentIndice++;
+		return res;
+	};
+
+	this.getGlobalNote= function(){
+		return {note: this.globalNote};
+	};
+
+	this.saveNote= function(noteData){
+		//Local note depending on the route
+		if (noteData.id!==undefined){
+			this.notes[noteData.id]= noteData.note;
+			localStorage.setItem(this.getViewKey() + '_' + noteData.id, noteData.note);
+		}
+		//Global note for the app
+		else{
+			this.globalNote= noteData.note;
+			localStorage.setItem(this.globalPrefixKey, noteData.note);
+		}
+	};
+
+	this.init= function(){
+		var that= this;
+		$rootScope.$on('$locationChangeSuccess', function(event, next, current){
+			var viewId= $location.url();
+			that.unitMainKey= viewId;
+			that.currentIndice= 0;
+			that.loadViewNotes();
+			that.loadGlobalNote();
+		});
+	};
+
+	this.init();
+
+}]);
