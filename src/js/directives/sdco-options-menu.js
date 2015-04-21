@@ -2,21 +2,22 @@ angular.module('sdco-tools.directives')
 
 /**
  * @ngdoc directive
- * @name menuSettings
+ * @name sdco-tools.directive:menuSettings
  * @restrict E
- *
- * @description
- * Display a basic menu, and allows to define an action when 
- * an option is selected/deselected
- *
  * @scope
  *
- * @param {array=} settingsContent angular expression evaluating to array of objects containing the fields
- * label (String), selected (boolean), select (function) and deselect (function).
- * So the data should look like [{label:'option1', selected: true, select:action1, deselect:action2}, ...].
+ * @description
+ * Display a basic menu list, and allows to define an action when 
+ * an option is selected/deselected
  *
- * 
- * @param {string=} onload Expression to evaluate when a new partial is loaded.
+ * @param {array=} settingsContent angular expression evaluating to an array defining the menu.
+ * The array must contain well formed objects. Each object must contain the fields
+ * <ul>
+ *	<li>label: The label displayed in the menu</li>
+ *	<li>selected: A boolean to specify that the element is selected</li>
+ *	<li>select: A function to execute when the menu is selected</li>
+ *	<li>deselect: A function to execute when the menu is deselected</li>
+ * </ul>
  **/
 
 .directive('sdcoOptionsMenu', ['$log', function($log){

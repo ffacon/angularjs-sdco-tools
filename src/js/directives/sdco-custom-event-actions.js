@@ -1,4 +1,15 @@
 angular.module('sdco-tools.directives')
+
+ /**
+ * @ngdoc directive
+ * @name sdco-tools.directive:sdcoCustomEventActions
+ * @restrict A
+ *
+ * @description
+ * TODO: This directive has to be move to another module.
+ *
+ * @scope
+ **/
 .directive('sdcoCustomEventActions',[ '$log',
 	function($log){
 		return{

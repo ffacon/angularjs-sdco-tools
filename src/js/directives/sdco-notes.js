@@ -1,4 +1,16 @@
 angular.module('sdco-tools.directives')
+/**
+ * @ngdoc directive
+ * @name sdco-tools.directive:sdcoNotes
+ * @restrict E
+ * @scope
+ *
+ * @description
+ * Allow to add a note in your views. This note also contain an editable area to let users
+ * to add comments and save them. You can add several note in a view, but remember that
+ * the note is related to the view where you use it. 
+ * For global note, have a look at {@link sdco-tools.directive:sdcoNotesExport sdcoNotesExport}.
+ **/
 .directive('sdcoNotes',[ '$log', '$modal', '$rootScope', 'sdcoNotesService',
 	function($log, $modal, $rootScope, sdcoNotesService){
 

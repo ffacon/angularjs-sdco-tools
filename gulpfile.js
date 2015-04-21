@@ -13,6 +13,7 @@ var gulp= require('gulp'),
   addSrc= require('gulp-add-src'),
   gfilter= require('gulp-filter'),
   rename= require('gulp-rename'),
+  gdocs= require('gulp-ngdocs'),
   gheader= require('gulp-header'),
   protractor= require('gulp-protractor').protractor,
   webdriver_standalone = require('gulp-protractor').webdriver_standalone,
@@ -108,8 +109,16 @@ gulp.task('test-e2e', ['webdriver_update', 'express'],  function(cb){
       });
 });
 
+  gulp.task('ngdocs', function(cb){
 
-gulp.task('prebuild', ['test-unit', 'jshint', 'test-e2e'], function(cb){
+    return gulp.src(appJsGlobs)
+    .pipe(gdocs.process())
+    .pipe(gulp.dest('./reports/doc/'));
+
+  });
+
+
+gulp.task('prebuild', ['test-unit', 'jshint', 'test-e2e', 'ngdocs'], function(cb){
   cb();
 });
 

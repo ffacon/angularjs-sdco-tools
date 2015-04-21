@@ -1,21 +1,4 @@
 angular.module('sdco-tools.directives')
-/**
- * @ngdoc directive
- * @name editorTab
- * @restrict E
- *
- * @description
- * Define the content of a tab for its parent editor
- *
- * @scope
- *
- * @param {string@} type type of the file: available values (for now)
- * are: html, javascript, css. HTML content has to be escaped
- * (TODO: add text type). 
- *
- * @param {string@} heading the title of the tab
- *
- **/
  .factory('editorTabLinkFn', ['sdcoEditorService', function(sdcoEditorService){
 
  	return function(initialEditorContent){
@@ -50,6 +33,39 @@ angular.module('sdco-tools.directives')
  	};
 
  }])
+ /**
+ * @ngdoc directive
+ * @name sdco-tools.directive:sdcoEditorTab
+ * @restrict E
+ *
+ * @description
+ * Define the content of a tab for its
+ * {@link sdco-tools.directive:sdcoEditor sdcoEditor} directive parent.
+ *
+ * @scope
+ *
+ * @param {String} type The type of the file: available values
+ * are: html, javascript, css. HTML content has to be escaped
+ *
+ * @param {String} heading the title of the tab
+ *
+ * @example
+ * <pre>
+ * <sdco-editor compile="false" compile-on-demand="true" js-fiddle="true">
+ *  <sdo-editor-tab type="html" heading="index.html">
+ *   &lt;p&gt; id="elt" my escaped html content &lt/p&gt;
+ *  </sdco-editor-tab>
+ *  <sdo-editor-tab type="javascript" heading="main.js">
+ *   document.getElementById('elt').innerText='changed';
+ *  </sdco-editor-tab> 
+ *  <sdo-editor-tab type="css" heading="main.css">
+ *   p{
+ *	  color: red;
+ *   }
+ *  </sdco-editor-tab>
+ * </sdco-editor>
+ * </pre>
+ **/
 .directive('sdcoEditorTab',	['$log', 'editorTabLinkFn', 
 	function($log,  editorTabLinkFn){
 

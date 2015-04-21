@@ -1,26 +1,25 @@
 angular.module('sdco-tools.directives')
 /**
  * @ngdoc directive
- * @name jsFiddle
+ * @name sdco-tools.directive:jsFiddle
  * @restrict E
  *
  * @description
- * Add a link which allows to send a post request to jsFiddle
- * Stylesheet (and image) is defined through the jsfiddle class
+ * Add an html link which allows to open a new jsFiddle
  *
  * @scope
  *
- * @param {string@} fwk the name of the framework to use (
+ * @param {String} fwk the name of the framework to use (
  * <a href="http://jsfiddle.net/" target="blank">go here</a>
  * to get available values)
  *
- * @param {string@} version the version of the framework (
+ * @param {String} version the version of the framework (
  * <a href="http://jsfiddle.net/" target="blank">go here</a>
  * to get available values)
  * 
- * @param {string@} title for this jsFiddle
+ * @param {String} title for this jsFiddle
  * 
- * @param {string@} description for this jsFiddle
+ * @param {string} description for this jsFiddle
  *
  * @param {array=} data an array containing 3 string fields to be used
  * for this jsFiddle: {html:'', css:'', js:'' }

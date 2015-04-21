@@ -1,15 +1,50 @@
 /**
-* @ngdoc service
-* @name codeMirrorService
-* 
-* @description
-* used by editors directives to get/sort data.
-* Can also be used by your app to store data in
-* the DOM or the localStorage
-*/
+ * @ngdoc service
+ * @name sdco-tools.service:sdcoEditorService
+ *
+ * @description
+ * 
+ * <p> 
+ * 	This service is used internally to help
+ *	{@link sdco-tools.directive:sdcoEditor sdo-editor} directive behavior
+ * </p>
+ *
+ * <p> This service shouldn't be used out of {@link sdco-tools this module} </p>
+ **/
+
+ /**
+ * @ngdoc service
+ * @name sdco-tools.service:sdcoEditorServiceProvider
+ *
+ * @description
+ * Provider of {@link sdco-tools.service:sdcoEditorService sdcoEditorService}
+ * 
+ **/
 angular.module('sdco-tools.services')
 .provider('sdcoEditorService', function(){
 
+	/**
+	* @ngdoc property
+	* @name isStorageActive
+	* @propertyOf sdco-tools.service:sdcoEditorServiceProvider
+	* @description
+	* <p>
+	* Specify if the editors content should be stored or not.
+	* If true, it will be stored in the data attribute of the body element.
+	* This is usefull when you have different views and want to keep the
+	* editor content when switching over views.
+	* It is <b>false</b> by default.
+	* </p>
+	*
+	* @example
+	* <pre>
+	* angular.module('yourMpdule', ['sdco-tools'])
+	* .config(['sdcoEditorServiceProvider', 
+	*   function(sdcoEditorServiceProvider){
+	*  sdcoEditorServiceProvider.isStorageActive= true;
+	*  ...
+	* </pre>
+	**/
 	this.isStorageActive= false;
 
 	var editorServiceImpl= function($log, $location, $rootScope, isStorageActive){
@@ -36,17 +71,6 @@ angular.module('sdco-tools.services')
 			};
 
 
-			/**
-			* @ngdoc method
-			* @name codeMirrorService#toDom
-			* @param {element} element the element to use to store the editor contents
-			* @param {boolean} [hide=true] should the element be hidden
-			* 
-			* @description
-			* Store the editor tabs content in the DOM
-			* This can be usefull when, for example, you go back to
-			* a view which has already been cached
-			*/
 			var activateStateSaving= function(){
 				$rootScope.$on('$locationChangeStart', function(event, next, current){
 					var storeKey= getStoreKey(current);
@@ -68,15 +92,23 @@ angular.module('sdco-tools.services')
 
 			/**
 			* @ngdoc method
-			* @name codeMirrorService#fromDom
-			* @param {element} element the element to use to retrieve the editor contents
-			* @param {boolean} [removeContent=true] should the element content be removed
-			* 
+			* @name installEditor
+			* @methodOf sdco-tools.service:sdcoEditorService
 			* @description
-			* Retrieve the editor tabs content from the DOM
-			* This can be usefull when, for example, you go back to
-			* a view which has already been cached
-			*/
+			* Store an editor instance and to install it on the specified element
+			* with the specified content.
+			* 
+			* @param {Element} theElement the element to install the editor to
+			* @param {String} content the content to display in the editor
+			* @param {String} type the content type, which has to be one of 
+			* <b>javascript</b>, <b>html</b>, <b>css</b>
+			*
+			* @param {String} id the id of the editor. Typically, its indice in the page, which is 1
+			* if it appears first in the page, 2 if its the second, ... Information needed to store
+			* and retrieve its content based on the view when needed.
+			*
+			* @param {Boolean} readOnly specifies if the editor should be in read-only mode
+			**/
 			this.installEditor= function(theElement, content, type, id, readOnly)
 			{
 				//Check if an instance exists
@@ -125,14 +157,32 @@ angular.module('sdco-tools.services')
 				return editor;
 			};
 
+			/**
+			* @ngdoc method
+			* @name getInstalledEditors
+			* @methodOf sdco-tools.service:sdcoEditorService
+			* @description
+			* Get installed editors (in the current view)
+			* 
+			* @returns {Array} an array of editor instances installed in the current view
+			**/
 			this.getInstalledEditors= function(){
 				return installedEditors;
 			};
 
 			this.setInstalledEditors= function(editors){
 				installedEditors= editors;
-			};
+			}
 
+			/**
+			* @ngdoc method
+			* @name removeEditor
+			* @methodOf sdco-tools.service:sdcoEditorService
+			* @description
+			* Remove an installed editor instance (both in the DOM and in the array referencing all instances)
+			* 
+			* @param {Object} editor the editor instance to remove
+			**/
 			this.removeEditor= function(editor){
 				var that= this;
 				angular.forEach(installedEditors, function(currentEditor, index){
@@ -142,11 +192,22 @@ angular.module('sdco-tools.services')
 						return false;
 					}
 				});
-
 			};
 
-
-			this.run= function(isAngular){
+			/**
+			* @ngdoc method
+			* @name run
+			* @methodOf sdco-tools.service:sdcoEditorService
+			* @description
+			* Get the content of installed editors aggregated by type
+			* 
+			* @returns {Object} an object containing one field by editor type, whose value
+			* is the aggregation of editors contents of this type.
+			* <pre>
+			* {javascript:'all js content', css:'all css content', xml: 'all xml content'}
+			* </pre>
+			**/
+			this.run= function(){
 
 				var that= this;
 

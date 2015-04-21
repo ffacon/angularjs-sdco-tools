@@ -1,4 +1,19 @@
 angular.module('sdco-tools.directives')
+/**
+ * @ngdoc directive
+ * @name sdco-tools.directive:sdcoNotesExport
+ * @restrict E
+ * @scope
+ *
+ * @description
+ * Allow to:
+ * <ul>
+ * 	<li>Add an editable global note to your app (say global because it doesn't depend on the view and is unique)</li>
+ * 	<li>Export all notes data (local and global)</li>
+ * 	<li>Import all notes data (local and global)</li>
+ *	<li> Usefull when user wants to keep its notes and changes of browser</li>
+ * </ul>
+ **/
 .directive('sdcoNotesExport',[ '$log', '$modal', 'sdcoNotesService',
 	function($log, $modal, sdcoNotesService){
 

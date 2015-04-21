@@ -211,31 +211,35 @@ angular.module('sdco-tools.directives')
 }])
 /**
  * @ngdoc directive
- * @name editor
+ * @name sdco-tools.directive:sdcoEditor
  * @restrict E
  *
  * @description
- * Defines a new editor
+ * Defines a new editor container, used in conjunction with
+ * {@link sdco-tools.directive:sdcoEditorTab sdcoEditorTab}
  *
  * @scope
  *
- * @param {boolean=} compile: specify if the editor content can be processed.
- * In such a case, a preview zone will be displayed at top of the editor.
+ * @param {Boolean} [compile=false]  specify if the editor content can be processed.
+ * In such a case, a preview zone will be displayed at top of the editor. HTML tabs
+ * will be concatenated and added to the previous zone, CSS tabs will also be applied,
+ * and JS content will be executed.
  * The compilation behavior also depends on the compileOnDemand value.
  *
- * @param {boolean=} compileJsFirst: By default, when compile is true, html is processed
+ * @param {Boolean} [compileJsFirst=false] By default, when compile is true, html is processed
  * first, then js is executed. In some specific cases, you can specify that js has to be 
- * firstexecuted 
+ * executed first 
  *
- * @param {boolean@} compileOnDemand: if set to true, compilation will be done
+ * @param {Boolean} [compileOnDemand=false] if set to true, compilation will be done
  * only when asked (with the play button). Otherwise, it is done each time the
  * editor content changes
  *
- * @param {string@} width a css value to define the editor width
+ * @param {String} width a css value to define the editor width
  *
- * @param {string@} height a css value to define the editor height
+ * @param {String} height a css value to define the editor height
  * 
- * @param {boolean@} jsFiddle: is the jsFiddle option is available
+ * @param {Boolean} jsFiddle: is the jsFiddle option link is displayed 
+ * (anyway, the user can always add it through the editor menu).
  **/
 .directive('sdcoEditor',['sdcoEditorLinkFn', 'sdcoEditorControllerFn', '$log',
 	function(sdcoEditorLinkFn, sdcoEditorControllerFn,  $log){
