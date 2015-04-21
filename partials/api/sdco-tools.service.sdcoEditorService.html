@@ -1,0 +1,49 @@
+<h1><code ng:non-bindable="">sdcoEditorService</code>
+<div><span class="hint">service in module <code ng:non-bindable="">sdco-tools</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="sdco-tools-service-page sdco-tools-service-sdcoeditorservice-page"><p> 
+This service is used internally to help
+<a href="api/sdco-tools.directive:sdcoEditor">sdo-editor</a> directive behavior
+</p>
+
+<p> This service shouldn&#39;t be used out of <a href="api/sdco-tools">this module</a> </p>
+</div></div>
+<div class="member method"><h2 id="methods">Methods</h2>
+<ul class="methods"><li><h3 id="methods_getinstallededitors">getInstalledEditors()</h3>
+<div class="getinstallededitors"><div class="getinstallededitors-page"><p>Get installed editors (in the current view)</p>
+</div><h5 id="methods_getinstallededitors_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-array">Array</a></td><td><div class="getinstallededitors-page"><p>an array of editor instances installed in the current view</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_installeditor">installEditor(theElement, content, type, id, readOnly)</h3>
+<div class="installeditor"><div class="installeditor-page"><p>Store an editor instance and to install it on the specified element
+with the specified content.</p>
+</div><h5 id="methods_installeditor_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>theElement</td><td><a href="" class="label type-hint type-hint-element">Element</a></td><td><div class="installeditor-page"><p>the element to install the editor to</p>
+</div></td></tr><tr><td>content</td><td><a href="" class="label type-hint type-hint-string">String</a></td><td><div class="installeditor-page"><p>the content to display in the editor</p>
+</div></td></tr><tr><td>type</td><td><a href="" class="label type-hint type-hint-string">String</a></td><td><div class="installeditor-page"><p>the content type, which has to be one of
+<b>javascript</b>, <b>html</b>, <b>css</b></p>
+</div></td></tr><tr><td>id</td><td><a href="" class="label type-hint type-hint-string">String</a></td><td><div class="installeditor-page"><p>the id of the editor. Typically, its indice in the page, which is 1
+if it appears first in the page, 2 if its the second, ... Information needed to store
+and retrieve its content based on the view when needed.</p>
+</div></td></tr><tr><td>readOnly</td><td><a href="" class="label type-hint type-hint-boolean">Boolean</a></td><td><div class="installeditor-page"><p>specifies if the editor should be in read-only mode</p>
+</div></td></tr></tbody></table></div>
+</li>
+<li><h3 id="methods_removeeditor">removeEditor(editor)</h3>
+<div class="removeeditor"><div class="removeeditor-page"><p>Remove an installed editor instance (both in the DOM and in the array referencing all instances)</p>
+</div><h5 id="methods_removeeditor_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>editor</td><td><a href="" class="label type-hint type-hint-object">Object</a></td><td><div class="removeeditor-page"><p>the editor instance to remove</p>
+</div></td></tr></tbody></table></div>
+</li>
+<li><h3 id="methods_run">run()</h3>
+<div class="run"><div class="run-page"><p>Get the content of installed editors aggregated by type</p>
+</div><h5 id="methods_run_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-object">Object</a></td><td><div class="run-page"><p>an object containing one field by editor type, whose value
+is the aggregation of editors contents of this type.
+<pre class="prettyprint linenums">
+{javascript:'all js content', css:'all css content', xml: 'all xml content'}
+</pre>
+</div></td></tr></table></div>
+</li>
+</ul>
+</div>
+</div>

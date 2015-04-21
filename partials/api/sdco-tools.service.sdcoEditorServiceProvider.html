@@ -1,0 +1,31 @@
+<h1><code ng:non-bindable="">sdcoEditorServiceProvider</code>
+<div><span class="hint">service in module <code ng:non-bindable="">sdco-tools</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="sdco-tools-service-page sdco-tools-service-sdcoeditorserviceprovider-page"><p>Provider of <a href="api/sdco-tools.service:sdcoEditorService">sdcoEditorService</a></p>
+</div></div>
+<div class="member property"><h2 id="properties">Properties</h2>
+<ul class="properties"><li><h3 id="properties_isstorageactive">isStorageActive</h3>
+<div class="isstorageactive"><div class="isstorageactive-page"><p>
+Specify if the editors content should be stored or not.
+If true, it will be stored in the data attribute of the body element.
+This is usefull when you have different views and want to keep the
+editor content when switching over views.
+It is <b>false</b> by default.
+</p>
+</div><h4 id="properties_isstorageactive_example">Example</h4>
+<div class="example"><div class="isstorageactive-page"><pre class="prettyprint linenums">
+angular.module('yourMpdule', ['sdco-tools'])
+.config(['sdcoEditorServiceProvider', 
+  function(sdcoEditorServiceProvider){
+ sdcoEditorServiceProvider.isStorageActive= true;
+ ...
+</pre>
+</div></div>
+</div>
+</li>
+</ul>
+</div>
+</div>

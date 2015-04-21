@@ -1,0 +1,65 @@
+<h1><code ng:non-bindable="">sdcoNotesService</code>
+<div><span class="hint">service in module <code ng:non-bindable="">sdco-tools</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="sdco-tools-service-page sdco-tools-service-sdconotesservice-page"><p> 
+This service is used internally to help
+<a href="api/sdco-tools.directive:sdcoNotes">sdoNotes</a> and 
+<a href="api/sdco-tools.directive:sdcoNotesExport">sdoNotesExport</a> 
+directives behavior.
+</p>
+
+<p> This service shouldn&#39;t be used out of <a href="api/sdco-tools">this module</a> </p>
+</div></div>
+<div class="member method"><h2 id="methods">Methods</h2>
+<ul class="methods"><li><h3 id="methods_exportnotes">exportNotes()</h3>
+<div class="exportnotes"><div class="exportnotes-page"><p>Get an array containing all the notes saved in the app.</p>
+</div><h5 id="methods_exportnotes_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-array">Array</a></td><td><div class="exportnotes-page"><p>all the notes saved in the app</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_getglobalnote">getGlobalNote()</h3>
+<div class="getglobalnote"><div class="getglobalnote-page"><p>Get the global note content</p>
+</div><h5 id="methods_getglobalnote_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-object">Object</a></td><td><div class="getglobalnote-page"><p>An object with the global note content.</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_getnote">getNote()</h3>
+<div class="getnote"><div class="getnote-page"><p>Get information about a note. Will be the first note for this view
+for the first call of the function, the second note for the second call, and so on.</p>
+</div><h5 id="methods_getnote_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-object">Object</a></td><td><div class="getnote-page"><p>An object containing the id (or position) of the note,
+and its content.</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_getviewkey">getViewKey()</h3>
+<div class="getviewkey"><div class="getviewkey-page"><p>Store an editor instance and to install it on the specified element
+with the specified content.</p>
+</div><h5 id="methods_getviewkey_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-string">String</a></td><td><div class="getviewkey-page"><p>the key which will be used to store/retrieve
+a note in/from the localStorage.</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_importnotes">importNotes(notes)</h3>
+<div class="importnotes"><div class="importnotes-page"><p>Import (in the local storage) all notes in parameter</p>
+</div><h5 id="methods_importnotes_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>notes</td><td><a href="" class="label type-hint type-hint-array">Array</a></td><td><div class="importnotes-page"><p>the notes to import</p>
+</div></td></tr></tbody></table></div>
+</li>
+<li><h3 id="methods_init">init()</h3>
+<div class="init"><div class="init-page"><p>Listen view changes to update needed data</p>
+</div></div>
+</li>
+<li><h3 id="methods_loadglobalnote">loadGlobalNote()</h3>
+<div class="loadglobalnote"><div class="loadglobalnote-page"><p>Locally loads global notes (accessibles in any view)</p>
+</div></div>
+</li>
+<li><h3 id="methods_loadviewnotes">loadViewNotes()</h3>
+<div class="loadviewnotes"><div class="loadviewnotes-page"><p>Locally loads notes used in the current view</p>
+</div></div>
+</li>
+<li><h3 id="methods_savenote">saveNote(the)</h3>
+<div class="savenote"><div class="savenote-page"><p>Save a new local or global note.</p>
+</div><h5 id="methods_savenote_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>the</td><td><a href="" class="label type-hint type-hint-object">Object</a></td><td><div class="savenote-page"><p>note to save</p>
+</div></td></tr></tbody></table></div>
+</li>
+</ul>
+</div>
+</div>

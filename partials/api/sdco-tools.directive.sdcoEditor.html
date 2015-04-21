@@ -1,0 +1,39 @@
+<h1><code ng:non-bindable="">sdcoEditor</code>
+<div><span class="hint">directive in module <code ng:non-bindable="">sdco-tools</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="sdco-tools-directive-page sdco-tools-directive-sdcoeditor-page"><p>Defines a new editor container, used in conjunction with
+<a href="api/sdco-tools.directive:sdcoEditorTab">sdcoEditorTab</a></p>
+</div></div>
+<h2 id="usage">Usage</h2>
+<div class="usage">as element:<pre class="prettyprint linenums">&lt;sdco-editor
+       compile="{Boolean}"
+       compile-js-first="{Boolean}"
+       compile-on-demand="{Boolean}"
+       width="{String}"
+       height="{String}"
+       js-fiddle:="{Boolean}"&gt;
+&lt;/sdco-editor&gt;</pre>
+<h3 id="usage_directive-info">Directive info</h3>
+<div class="directive-info"><ul><li>This directive creates new scope.</li>
+</ul>
+</div>
+<h4 id="usage_directive-info_parameters">Parameters</h4><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>compile</td><td><a href="" class="label type-hint type-hint-boolean">Boolean</a></td><td><div class="sdco-tools-directive-page sdco-tools-directive-sdcoeditor-page"><p>specify if the editor content can be processed.
+In such a case, a preview zone will be displayed at top of the editor. HTML tabs
+will be concatenated and added to the previous zone, CSS tabs will also be applied,
+and JS content will be executed.
+The compilation behavior also depends on the compileOnDemand value.</p>
+</div> <p><em>(default: false)</em></p></td></tr><tr><td>compileJsFirst</td><td><a href="" class="label type-hint type-hint-boolean">Boolean</a></td><td><div class="sdco-tools-directive-page sdco-tools-directive-sdcoeditor-page"><p>By default, when compile is true, html is processed
+first, then js is executed. In some specific cases, you can specify that js has to be 
+executed first </p>
+</div> <p><em>(default: false)</em></p></td></tr><tr><td>compileOnDemand</td><td><a href="" class="label type-hint type-hint-boolean">Boolean</a></td><td><div class="sdco-tools-directive-page sdco-tools-directive-sdcoeditor-page"><p>if set to true, compilation will be done
+only when asked (with the play button). Otherwise, it is done each time the
+editor content changes</p>
+</div> <p><em>(default: false)</em></p></td></tr><tr><td>width</td><td><a href="" class="label type-hint type-hint-string">String</a></td><td><div class="sdco-tools-directive-page sdco-tools-directive-sdcoeditor-page"><p>a css value to define the editor width</p>
+</div></td></tr><tr><td>height</td><td><a href="" class="label type-hint type-hint-string">String</a></td><td><div class="sdco-tools-directive-page sdco-tools-directive-sdcoeditor-page"><p>a css value to define the editor height</p>
+</div></td></tr><tr><td>jsFiddle:</td><td><a href="" class="label type-hint type-hint-boolean">Boolean</a></td><td><div class="sdco-tools-directive-page sdco-tools-directive-sdcoeditor-page"><p>is the jsFiddle option link is displayed
+(anyway, the user can always add it through the editor menu).</p>
+</div></td></tr></tbody></table></div>
+</div>

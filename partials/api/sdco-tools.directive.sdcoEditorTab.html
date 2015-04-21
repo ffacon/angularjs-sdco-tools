@@ -1,0 +1,40 @@
+<h1><code ng:non-bindable="">sdcoEditorTab</code>
+<div><span class="hint">directive in module <code ng:non-bindable="">sdco-tools</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="sdco-tools-directive-page sdco-tools-directive-sdcoeditortab-page"><p>Define the content of a tab for its
+<a href="api/sdco-tools.directive:sdcoEditor">sdcoEditor</a> directive parent.</p>
+</div></div>
+<h2 id="usage">Usage</h2>
+<div class="usage">as element:<pre class="prettyprint linenums">&lt;sdco-editor-tab
+       type="{String}"
+       heading="{String}"&gt;
+&lt;/sdco-editor-tab&gt;</pre>
+<h3 id="usage_directive-info">Directive info</h3>
+<div class="directive-info"><ul><li>This directive creates new scope.</li>
+</ul>
+</div>
+<h4 id="usage_directive-info_parameters">Parameters</h4><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>type</td><td><a href="" class="label type-hint type-hint-string">String</a></td><td><div class="sdco-tools-directive-page sdco-tools-directive-sdcoeditortab-page"><p>The type of the file: available values
+are: html, javascript, css. HTML content has to be escaped</p>
+</div></td></tr><tr><td>heading</td><td><a href="" class="label type-hint type-hint-string">String</a></td><td><div class="sdco-tools-directive-page sdco-tools-directive-sdcoeditortab-page"><p>the title of the tab</p>
+</div></td></tr></tbody></table></div>
+<h2 id="example">Example</h2>
+<div class="example"><div class="sdco-tools-directive-page sdco-tools-directive-sdcoeditortab-page"><pre class="prettyprint linenums">
+&lt;sdco-editor compile="false" compile-on-demand="true" js-fiddle="true"&gt;
+ &lt;sdo-editor-tab type="html" heading="index.html"&gt;
+  &lt;p&gt; id="elt" my escaped html content &lt/p&gt;
+ &lt;/sdco-editor-tab&gt;
+ &lt;sdo-editor-tab type="javascript" heading="main.js"&gt;
+  document.getElementById('elt').innerText='changed';
+ &lt;/sdco-editor-tab&gt; 
+ &lt;sdo-editor-tab type="css" heading="main.css"&gt;
+  p{
+  color: red;
+  }
+ &lt;/sdco-editor-tab&gt;
+&lt;/sdco-editor&gt;
+</pre>
+</div></div>
+</div>

@@ -1,0 +1,27 @@
+<h1><code ng:non-bindable="">menuSettings</code>
+<div><span class="hint">directive in module <code ng:non-bindable="">sdco-tools</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="sdco-tools-directive-page sdco-tools-directive-menusettings-page"><p>Display a basic menu list, and allows to define an action when 
+an option is selected/deselected</p>
+</div></div>
+<h2 id="usage">Usage</h2>
+<div class="usage">as element:<pre class="prettyprint linenums">&lt;menu-settings
+       [settings-content="{array}"]&gt;
+&lt;/menu-settings&gt;</pre>
+<h3 id="usage_directive-info">Directive info</h3>
+<div class="directive-info"><ul><li>This directive creates new scope.</li>
+</ul>
+</div>
+<h4 id="usage_directive-info_parameters">Parameters</h4><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>settingsContent <div><em>(optional)</em></div></td><td><a href="" class="label type-hint type-hint-array">array</a></td><td><div class="sdco-tools-directive-page sdco-tools-directive-menusettings-page"><p>angular expression evaluating to an array defining the menu.
+The array must contain well formed objects. Each object must contain the fields</p>
+<ul>
+<li>label: The label displayed in the menu</li>
+<li>selected: A boolean to specify that the element is selected</li>
+<li>select: A function to execute when the menu is selected</li>
+<li>deselect: A function to execute when the menu is deselected</li>
+</ul>
+</div></td></tr></tbody></table></div>
+</div>
