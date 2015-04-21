@@ -19,7 +19,7 @@
 
 ## API Documentation
 
-*TODO*
+Available <a href="http://worldline.github.io/angularjs-sdco-tools/api" target="_blank">here</a>.
 
 ## Releasing
 
