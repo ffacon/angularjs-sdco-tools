@@ -3,8 +3,12 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>Notes test</title>
-		<link rel="stylesheet" type="text/css" href="/styles/sdco-tools.css">
+		<!-- build:ext_css2(./bower_components) notes/styles/ext.css  -->
 		<link rel="stylesheet" type="text/css" href="/bootstrap/dist/css/bootstrap.css">
+		<!-- endbuild -->
+		<!-- build:lib_css2(./src) notes/styles/lib.css  -->
+		<link rel="stylesheet" type="text/css" href="/styles/sdco-tools.css">
+		<!-- endbuild -->
 	</head>
 	<body ng-controller="mainController">
 
@@ -34,11 +38,14 @@
 
 		<div ng-view></div>
 
+		<!-- build:ext_js2(./bower_components) notes/js/ext.js  -->
 		<script type="text/javascript" src="/angular/angular.js"></script>
 		<script type="text/javascript" src="/angular-sanitize/angular-sanitize.js"></script>
 		<script type="text/javascript" src="/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 		<script type="text/javascript" src="/angular-route/angular-route.js"></script>
+		<!-- endbuild -->
 
+		<!-- build:lib_js2(./src) notes/js/lib.js  -->
 		<script type="text/javascript" src="/js/app.js"></script>
 
 		<script type="text/javascript" src="/js/services/module.js"></script>
@@ -50,6 +57,7 @@
 		<script type="text/javascript" src="/js/directives/sdco-notes.js"></script>
 		<script type="text/javascript" src="/js/directives/sdco-notes-export.js"></script>
 		<script type="text/javascript" src="/js/directives/sdco-stop-keydown-propagation.js"></script>
+		<!-- endbuild -->
 
 		<script type="text/javascript">
 			angular.module('myApp', ['sdco-tools', 'ngRoute'])

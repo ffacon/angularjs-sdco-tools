@@ -18,14 +18,15 @@ var gulp= require('gulp'),
   protractor= require('gulp-protractor').protractor,
   webdriver_standalone = require('gulp-protractor').webdriver_standalone,
   webdriver_update = require('gulp-protractor').webdriver_update,
-  myUtils= require(__dirname + '/more/gulp/utils'),
+  myUtils= require('./utils'),
   server= myUtils.getServer();
 
-var appJsGlobs=['src/js/**/*.js'],
-    unitTestJsGlobs=['test/unit/utils.js','test/unit/**/*Spec.js'],
-    e2eJsGlobs= ['test/e2e/**/*.js'],
-    appCssGlobs= ['src/styles/**/*.css'],
-    appImages= ['src/imgs/**/*'];
+var globs= myUtils.globs,
+    appJsGlobs=globs.appJsGlobs,
+    unitTestJsGlobs=globs.unitTestJsGlobs,
+    e2eJsGlobs= globs.e2eJsGlobs,
+    appCssGlobs= globs.appCssGlobs,
+    appImages= globs.appImages;
 
 var target='dist',
     targetAppName= myUtils.getPackage().name;
@@ -109,13 +110,13 @@ gulp.task('test-e2e', ['webdriver_update', 'express'],  function(cb){
       });
 });
 
-  gulp.task('ngdocs', function(cb){
+gulp.task('ngdocs', function(cb){
 
-    return gulp.src(appJsGlobs)
-    .pipe(gdocs.process())
-    .pipe(gulp.dest('./reports/doc/'));
+  return gulp.src(appJsGlobs)
+  .pipe(gdocs.process())
+  .pipe(gulp.dest('./reports/doc/'));
 
-  });
+});
 
 
 gulp.task('prebuild', ['test-unit', 'jshint', 'test-e2e', 'ngdocs'], function(cb){

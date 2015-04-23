@@ -5,7 +5,10 @@
     "name" : "Legrand Régis",
     "email" : "regis.legrand@worldline.com"
   },
-  "scripts": {},
+  "scripts": {
+        "dist":"gulp --gulpfile more/gulp/standard.js --cwd .",
+        "ghpages":"gulp --gulpfile more/gulp/ghpages.js --cwd ."
+    },
   "dependencies": {},
   "devDependencies": {
     "bower":"1.3.12",
@@ -25,6 +28,7 @@
     "gulp-bower-files": "0.2.7",
     "gulp-add-src":"0.2.0",
     "gulp-filter": "1.0.2",
+    "gulp-usemin":"0.3.11",
     "gulp-ngdocs":"0.2.10",
     "gulp-header":"1.2.2",
     "jasmine-core": "2.1.2",
