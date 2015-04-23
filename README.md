@@ -54,7 +54,7 @@ Available <a href="http://worldline.github.io/angularjs-sdco-tools/doc/" target=
 ## Samples
 Some samples
 <p>
-<a href="http://worldline.github.io/angularjs-sdco-tools/sample/editor" target="_blank">Here</a> 
+<a href="http://worldline.github.io/angularjs-sdco-tools/sample/editor.html" target="_blank">Here</a> 
 and
-<a href="http://worldline.github.io/angularjs-sdco-tools/sample/notes" target="_blank">here</a> 
+<a href="http://worldline.github.io/angularjs-sdco-tools/sample/notes.html" target="_blank">here</a> 
 </p>
