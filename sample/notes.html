@@ -1,0 +1,56 @@
+<!doctype html>
+<html ng-app="myApp">
+	<head>
+		<meta charset="utf-8" />
+		<title>Notes test</title>
+		<link rel="stylesheet" href="notes/styles/ext.css"/>
+		<link rel="stylesheet" href="notes/styles/lib.css"/>
+	</head>
+	<body ng-controller="mainController">
+
+		<style type="text/css">
+		body{
+			font-size: large;
+		}
+		</style>
+
+		<!-- view1 -->
+		<script type="text/ng-template" id="view1.html">
+			view 1
+			<sdco-notes>Content 1</sdco-notes>
+			<sdco-notes>Content 2</sdco-notes>
+		</script>
+
+		<!-- view2 -->
+		<script type="text/ng-template" id="view2.html">
+			view 2
+			<sdco-notes>Content 1</sdco-notes>
+			<sdco-notes>Content 2</sdco-notes>
+		</script>
+
+		<button id="view1" ng-click="goto('/view1');">1</button>
+        <button id="view2" ng-click="goto('/view2');">2</button>
+        <sdco-notes-export></sdco-notes-export>
+
+		<div ng-view></div>
+
+		<script src="notes/js/ext.js"></script>
+
+		<script src="notes/js/lib.js"></script>
+
+		<script type="text/javascript">
+			angular.module('myApp', ['sdco-tools', 'ngRoute'])
+			.config(['$routeProvider', function($routeProvider){
+			    $routeProvider.when( '/view1', {templateUrl: 'view1.html' })
+			    .when( '/view2', {templateUrl: 'view2.html' })
+			    .otherwise({redirectTo : "view1"});
+			}])
+			.controller('mainController', ['$scope','$location', function($scope, $location){
+		         $scope.goto= function(viewId){
+		             console.log('view :' + viewId);
+		             $location.url(viewId);
+		         }
+			}]);
+		</script>
+	</body>
+</html>

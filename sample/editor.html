@@ -1,0 +1,57 @@
+<!doctype html>
+<html ng-app="myApp">
+	<head>
+		<meta charset="utf-8" />
+		<title>Editor Test</title>
+		<link rel="stylesheet" href="editor/styles/ext.css"/>
+		<link rel="stylesheet" href="editor/styles/lib.css"/>
+	</head>
+	<body ng-controller="mainController">
+
+		<!-- view1 -->
+		<script type="text/ng-template" id="view1.html">
+			<sdco-editor compile="true" compile-on-demand="true" width="800px" height="300px" js-fiddle="false">
+				<sdco-editor-tab type="html" heading="sample.html">
+&lt;div&gt;
+{{'toto'}}
+&lt;p id="afterCompile"&gt;text&lt;/p&gt;
+&lt;/div&gt;
+				</sdco-editor-tab>
+				<sdco-editor-tab type="javascript" heading="sample.js">
+document.getElementById('afterCompile').innerText='modified';
+				</sdco-editor-tab>
+			</sdco-editor>			
+		</script>
+
+		<!-- view1 -->
+		<script type="text/ng-template" id="view2.html">
+			view2
+		</script>
+
+		<button id="view1" ng-click="goto('/view1');">1</button>
+        <button id="view2" ng-click="goto('/view2');">2</button>
+
+		<div ng-view></div>
+
+		<script src="editor/js/ext.js"></script>
+
+		<script src="editor/js/lib.js"></script>
+
+		<script type="text/javascript">
+			angular.module('myApp', ['sdco-tools', 'ngRoute'])
+			.config(['$routeProvider','sdcoEditorServiceProvider', function($routeProvider, sdcoEditorServiceProvider){
+			    $routeProvider.when( '/view1', {templateUrl: 'view1.html' })
+			    .when( '/view2', {templateUrl: 'view2.html' })
+			    .otherwise({redirectTo : "view1"});
+
+			    sdcoEditorServiceProvider.isStorageActive= true;
+			}])
+			.controller('mainController', ['$scope','$location', function($scope, $location){
+		         $scope.goto= function(viewId){
+		             console.log('view :' + viewId);
+		             $location.url(viewId);
+		         }
+			}]);
+		</script>
+	</body>
+</html>
