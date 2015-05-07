@@ -4,11 +4,13 @@ angular.module('sdco-tools.directives')
 .factory('sdcoEditorLinkFn', ['sdcoEditorService', function(sdcoEditorService){
  	return function($scope, $element, $attrs, $controller, $transclude){
 
+ 		var sdcoEditorServiceInstance= sdcoEditorService.getInstance();
+
 		//Check transclude is done and then
 		// process editor content if needed
 		$scope.checkAndProcessContent= function(){
 
-			$scope.contents= sdcoEditorService.run();				
+			$scope.contents= sdcoEditorServiceInstance.run();				
 			if (!$scope.compile || $scope.isCompileOnDemand()){
 				return;
 			}
@@ -79,8 +81,10 @@ angular.module('sdco-tools.directives')
 
 		var urlInd= 0;
 
+		var sdcoEditorServiceInstance= sdcoEditorService.getInstance();
+
 		$scope.preprocess= function(){
-			$scope.contents= sdcoEditorService.run();
+			$scope.contents= sdcoEditorServiceInstance.run();
 		};
 
 		$scope.processHtml= function(){
@@ -170,6 +174,8 @@ angular.module('sdco-tools.directives')
 			}
 		};
 
+		this.installEditor=sdcoEditorServiceInstance.installEditor;
+
 		this.getNbEditors= function(){
 			return tabScopes.length;
 		};
@@ -234,12 +240,17 @@ angular.module('sdco-tools.directives')
  * only when asked (with the play button). Otherwise, it is done each time the
  * editor content changes
  *
+ * @param {Boolean} [readOnly=false] Set the editor tabs in readOnly mode (no modifications allowed)
+ *
  * @param {String} width a css value to define the editor width
  *
  * @param {String} height a css value to define the editor height
  * 
- * @param {Boolean} jsFiddle: is the jsFiddle option link is displayed 
- * (anyway, the user can always add it through the editor menu).
+ * @param {Boolean} [jsFiddle=false] is the jsFiddle option link is displayed 
+ * (the user can add it through the editor menu if it is active).
+ *
+ * @param {Boolean} [hideMenu=false] Hide the top right menu: typically, if set to true, 
+ * compile to false and jsFiddle to false, the editor is used for display only.
  **/
 .directive('sdcoEditor',['sdcoEditorLinkFn', 'sdcoEditorControllerFn', '$log',
 	function(sdcoEditorLinkFn, sdcoEditorControllerFn,  $log){
@@ -256,6 +267,7 @@ angular.module('sdco-tools.directives')
 				width: '@',
 				height: '@',
 				jsFiddle: '@',
+				hideMenu: '@',
 				displayTitle:'@'
 			},
 			template: '\
@@ -282,7 +294,7 @@ angular.module('sdco-tools.directives')
 						<li ng-if="compile && isCompileOnDemand()"> \
 							<a href="" class="compile-on-demand" ng-click="processEditorsContent()"></a> \
 						</li> \
-						<li> \
+						<li ng-if="hideMenu != \'true\'"> \
 							<section class="menu-options"> \
 								<sdco-options-menu settings-content="settingsMenu"></sdco-options-menu> \
 							</section> \

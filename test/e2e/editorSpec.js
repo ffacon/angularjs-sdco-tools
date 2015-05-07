@@ -9,7 +9,7 @@ describe('editor homepage', function(){
 
 	it('Check tabs are available', function(){
 		element.all(by.binding('tabScope.heading')).then(function(elements){
-			expect(elements.length).toBe(2);
+			expect(elements.length).toBe(4);
 			expect(elements[0].getText()).toEqual('sample.html');
 			expect(elements[1].getText()).toEqual('sample.js');
 		});
@@ -18,56 +18,56 @@ describe('editor homepage', function(){
 	it('Display the jsFiddle button', function(){
 
 		//CLick on the parameters menu
-		element(by.css('.main-menu')).click();
+		element(by.css('#editor1 .main-menu')).click();
 
 		//Click on jsFiddle
-		element(by.css('a[title="jsFiddle"')).click();
+		element(by.css('#editor1 a[title="jsFiddle"')).click();
 
-		expect(element(by.css('.jsfiddle')).isPresent()).toBe(true);
+		expect(element(by.css('#editor1 .jsfiddle')).isPresent()).toBe(true);
 	});
 
 	it('The compile on demand button must be available', function(){
-		expect(element(by.css('.compile-on-demand')).isPresent()).toBe(true);
+		expect(element(by.css('#editor1 .compile-on-demand')).isPresent()).toBe(true);
 	});
 
 	it('The compile button should disappear and appear', function(){
 
 		//DISAPPEAR
 		//CLick on the parameters menu
-		element(by.css('.main-menu')).click();
+		element(by.css('#editor1 .main-menu')).click();
 		//Click on compile on demand menu -> disappear
-		element(by.css('a[title="compile on demand"]')).click();
+		element(by.css('#editor1 a[title="compile on demand"]')).click();
 		//Check compile on demand element appeared
-		expect(element(by.css('.compile-on-demand')).isPresent()).toBe(false);
+		expect(element(by.css('#editor1 .compile-on-demand')).isPresent()).toBe(false);
 
 
 		//APPEAR
 		//CLick on the parameters menu
-		element(by.css('.main-menu')).click();
+		element(by.css('#editor1 .main-menu')).click();
 		//Click on compile on demand menu -> disappear
-		element(by.css('a[title="compile on demand"]')).click();
+		element(by.css('#editor1 a[title="compile on demand"]')).click();
 		//Check compile on demand element appeared
-		expect(element(by.css('.compile-on-demand')).isPresent()).toBe(true);
+		expect(element(by.css('#editor1 .compile-on-demand')).isPresent()).toBe(true);
 	});
 
 	it('Check compilation button', function(){
 
 		//Click compile button
-		element(by.css('.compile-on-demand')).click();
+		element(by.css('#editor1 .compile-on-demand')).click();
 		//Check compilation applied
-		expect(element(by.id('afterCompile')).getText()).toEqual('modified');
+		expect(element(by.id('afterCompile1')).getText()).toEqual('modified');
 
 		//Replace js content
 		browser.executeAsyncScript(function(callback) {
 			var jsCodemirror= document.querySelectorAll('.CodeMirror')[1];
-			jsCodemirror.CodeMirror.setValue('document.getElementById("afterCompile").innerText="modified2";');
+			jsCodemirror.CodeMirror.setValue('document.getElementById("afterCompile1").innerText="modified2";');
 			callback();
 		});
 
 		//Click compile button
-		element(by.css('.compile-on-demand')).click();
+		element(by.css('#editor1 .compile-on-demand')).click();
 		//Check compilation applied
-		expect(element(by.id('afterCompile')).getText()).toEqual('modified2');
+		expect(element(by.id('afterCompile1')).getText()).toEqual('modified2');
 	});
 
 
@@ -75,19 +75,19 @@ describe('editor homepage', function(){
 
 		//1) Disable compile on demand
 		//CLick on the parameters menu
-		element(by.css('.main-menu')).click();
+		element(by.css('#editor1 .main-menu')).click();
 		//Click on compile on demand menu -> disappear
-		element(by.css('a[title="compile on demand"]')).click();		
+		element(by.css('#editor1 a[title="compile on demand"]')).click();		
 
 		//2) Check inline compilation
 		//Replace js content
 		browser.executeAsyncScript(function(callback) {
 			var jsCodemirror= document.querySelectorAll('.CodeMirror')[1];
-			jsCodemirror.CodeMirror.setValue('document.getElementById("afterCompile").innerText="modified2";');
+			jsCodemirror.CodeMirror.setValue('document.getElementById("afterCompile1").innerText="modified2";');
 			callback();
 		});
 		//Check compilation applied
-		expect(element(by.id('afterCompile')).getText()).toEqual('modified2');
+		expect(element(by.id('afterCompile1')).getText()).toEqual('modified2');
 	});	
 
 	it('Check content remains modified when route changes', function(){

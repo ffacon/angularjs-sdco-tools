@@ -46,13 +46,14 @@ angular.module('sdco-tools.services')
 	* </pre>
 	**/
 	this.isStorageActive= false;
+	var provider= this;
 
-	var editorServiceImpl= function($log, $location, $rootScope, isStorageActive){
+	var editorServiceImpl= function($log, $location, $rootScope, isStorageActive, instanceId){
 
 			var installedEditors={};
 
 			var getStoreKey= function(value){
-				return 'sdcoEditor' + value;
+				return 'sdcoEditor' + value + instanceId;
 			};
 
 			var getJsonDesc= function(){ 
@@ -71,18 +72,11 @@ angular.module('sdco-tools.services')
 			};
 
 
-			var activateStateSaving= function(){
-				$rootScope.$on('$locationChangeStart', function(event, next, current){
-					var storeKey= getStoreKey(current);
-					angular.element(document.querySelector('body')).data(storeKey, getJsonDesc());
-					installedEditors= {};
-				});
+			this.store= function(current){
+				var storeKey= getStoreKey(current);
+				angular.element(document.querySelector('body')).data(storeKey, getJsonDesc());
+				installedEditors= {};				
 			};
-
-			//Do we need to activate auto saving
-			if (isStorageActive){
-				activateStateSaving();
-			}			
 
 
 			var getPreviousState= function(){
@@ -243,7 +237,43 @@ angular.module('sdco-tools.services')
 	//Get the service
 	this.$get=['$log', '$location', '$rootScope', 
 		function($log, $location, $rootScope){
-			return new editorServiceImpl($log, $location, $rootScope, this.isStorageActive);
+
+			//The service instances for a view
+			var viewInstances= [];
+
+			var updateViewState= function(){
+				$rootScope.$on('$locationChangeStart', function(event, next, current){
+
+					//When the view changes, clear instances
+					//And if storage mode is active, save data
+
+					if (provider.isStorageActive){
+						for (var i in viewInstances){
+							var instance= viewInstances[i];
+							instance.store(current);
+						}
+					}
+
+					viewInstances= [];
+				});
+			};
+
+			//Do we need to activate auto saving
+			updateViewState();
+
+			return {
+				getInstance: function(){
+					var newInstance= new editorServiceImpl($log, $location, $rootScope, provider.isStorageActive, viewInstances.length);
+					if (provider.isStorageActive){
+						viewInstances.push(newInstance);
+					}
+					return newInstance;
+				}
+			};
+
+
+
+			
 		}
 	];
 

@@ -42,13 +42,14 @@ describe('service sdco-editor', function(){
             id= 0,
             readonly= true;
 
-        var editor= service.installEditor(installToElement, content, type, id, readonly);
+        var instance= service.getInstance();
+        var editor= instance.installEditor(installToElement, content, type, id, readonly);
 
         expect(editor.getValue()).toBe(content);
         expect(editor.getOption('htmlMode')).toBe(true);
         expect(editor.getOption('mode').name).toBe('xml');
 
-        var installedEditors= service.getInstalledEditors();
+        var installedEditors= instance.getInstalledEditors();
         expect(installedEditors[0]).toBe(editor);
 
         //Clean
@@ -63,12 +64,13 @@ describe('service sdco-editor', function(){
             id= 0,
             readonly= true;
 
-        var editor= service.installEditor(installToElement, content, type, id, readonly);
+        var instance= service.getInstance();
+        var editor= instance.installEditor(installToElement, content, type, id, readonly);
 
         expect(editor.getValue()).toBe(content);
         expect(editor.getOption('mode').name).toBe('css');
 
-        var installedEditors= service.getInstalledEditors();
+        var installedEditors= instance.getInstalledEditors();
         expect(installedEditors[0]).toBe(editor);
 
         //Clean
@@ -83,12 +85,13 @@ describe('service sdco-editor', function(){
             id= 0,
             readonly= true;
 
-        var editor= service.installEditor(installToElement, content, type, id, readonly);
+        var instance= service.getInstance();
+        var editor= instance.installEditor(installToElement, content, type, id, readonly);
 
         expect(editor.getValue()).toBe(content);
         expect(editor.getOption('mode').name).toBe('javascript');
 
-        var installedEditors= service.getInstalledEditors();
+        var installedEditors= instance.getInstalledEditors();
         expect(installedEditors[0]).toBe(editor);
 
         //Clean
@@ -97,7 +100,7 @@ describe('service sdco-editor', function(){
 
     it('Check installEditor with previous state', function(){
 
-        var installToElement= $('<div id="editor1 />')[0],
+        var installToElement= $('<div id="editor1" />')[0],
             content='<div>content</div>',
             type= 'html',
             id= 0,
@@ -107,13 +110,14 @@ describe('service sdco-editor', function(){
         //store content to be retrieved during install
         $('body').data(storeKey, [{id:0, content:content}]);
 
-        var editor= service.installEditor(installToElement, undefined, type, id, readonly);
+        var instance= service.getInstance();
+        var editor= instance.installEditor(installToElement, content, type, id, readonly);
 
         expect(editor.getValue()).toBe(content);
         expect(editor.getOption('htmlMode')).toBe(true);
         expect(editor.getOption('mode').name).toBe('xml');
 
-        var installedEditors= service.getInstalledEditors();
+        var installedEditors= instance.getInstalledEditors();
         expect(installedEditors[0]).toBe(editor);
 
         //Clean
@@ -125,11 +129,12 @@ describe('service sdco-editor', function(){
         var element= $('<div id="editor1" />')[0];
         var editor= CodeMirror(element, {content:''});
         var editors={0:editor};
-        service.setInstalledEditors(editors);
 
-        service.removeEditor(editor);
+        var instance= service.getInstance();
+        instance.setInstalledEditors(editors);
+        instance.removeEditor(editor);
 
-        expect(service.getInstalledEditors()[0]).not.toBeDefined();
+        expect(instance.getInstalledEditors()[0]).not.toBeDefined();
     });
 
     it('Check run', function(){
@@ -148,8 +153,9 @@ describe('service sdco-editor', function(){
                 6: new MockEditor('javascript', jsContent),
             }
 
-            service.setInstalledEditors(editors);
-            var res= service.run();
+            var instance= service.getInstance();
+            instance.setInstalledEditors(editors);
+            var res= instance.run();
 
             expect(res.javascript).toBe(jsContent + jsContent);
             expect(res.html).toBe(htmlContent + htmlContent);

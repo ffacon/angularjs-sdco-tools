@@ -1,12 +1,13 @@
 {
   "name": "angular-sdco-tools",
-  "version": "1.0.1-SNAPSHOT",
+  "version": "1.0.1",
   "author":{
     "name" : "Legrand Régis",
     "email" : "regis.legrand@worldline.com"
   },
   "scripts": {
         "dist":"gulp --gulpfile more/gulp/standard.js --cwd .",
+        "serve":"gulp express --gulpfile more/gulp/standard.js --cwd .",
         "ghpages":"gulp --gulpfile more/gulp/ghpages.js --cwd ."
     },
   "dependencies": {},

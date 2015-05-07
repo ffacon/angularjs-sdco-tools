@@ -3,39 +3,56 @@
 describe('Directive sdcoEditorTab', function(){
 
 	var scope, topElement, element, htmlContent,
-		mockSdcoEditorService, sdcoEditorDirectiveMocks, mockEditor;
+		mockSdcoEditorService, directiveCtrlMocks, sdcoEditorDirectiveMocks, mockEditor;
 
 
 	beforeEach(angular.mock.module('sdco-tools.directives'));
 
 	beforeEach(function(){
 
+		directiveCtrlMocks={
+			installEditor: jasmine.createSpy('installEditor')
+			.and.callFake(function(theElement, content, type, id, readOnly){
+				mockEditor= new MockEditor(type, content);
+				return mockEditor;
+			}),
+			processEditorsContent: jasmine.createSpy('processEditorsContent'),
+			getNbEditors: jasmine.createSpy('getNbEditors')
+			.and.callFake(function(){return 1;}),
+			addTabScope: jasmine.createSpy('addTabScope'),
+			confirmPreview: jasmine.createSpy('confirmPreview'),
+			getScope: jasmine.createSpy('getScope')
+			.and.callFake(function(){return {readOnly: true};})
+		};
+
 		sdcoEditorDirectiveMocks={
 			link: function(){},
 			controller: function(){
-				this.processEditorsContent= jasmine.createSpy('processEditorsContent');
-				this.getNbEditors= jasmine.createSpy('getNbEditors')
-				.and.callFake(function(){return 1;});
-				this.addTabScope= jasmine.createSpy('addTabScope');
-				this.confirmPreview= jasmine.createSpy('confirmPreview');
-				this.getScope= jasmine.createSpy('getScope')
-				.and.callFake(function(){return {readOnly: true};});
+				this.installEditor= directiveCtrlMocks.installEditor;
+				this.processEditorsContent= directiveCtrlMocks.processEditorsContent;
+				this.getNbEditors= directiveCtrlMocks.getNbEditors;
+				this.addTabScope= directiveCtrlMocks.addTabScope;
+				this.confirmPreview= directiveCtrlMocks.confirmPreview;
+				this.getScope= directiveCtrlMocks.getScope;
 			}
-		}
+		};
 
 		var MockEditor= tuUtils.getMockedEditor();
 
 		mockSdcoEditorService= new function(){
-			this.installEditor= jasmine.createSpy('installEditor')
-			.and.callFake(function(theElement, content, type, id, readOnly){
-				mockEditor= new MockEditor(type, content);
-				return mockEditor;
-			});
-			this.getInstalledEditors= jasmine.createSpy('getInstalledEditors');
-			this.setInstalledEditors= jasmine.createSpy('setInstalledEditors');
-			this.removeEditor= jasmine.createSpy('removeEditor');
-			this.run= jasmine.createSpy('run');
-		}
+
+			this.instanceMock= {
+				installEditor: jasmine.createSpy('installEditor'),
+				getInstalledEditors: jasmine.createSpy('getInstalledEditors'),
+				setInstalledEditors: jasmine.createSpy('setInstalledEditors'),
+				removeEditor: jasmine.createSpy('removeEditor'),
+				run: jasmine.createSpy('run')
+			};
+
+			this.getInstance= function(){
+				return this.instanceMock();
+			};
+		};
 
 
 		module(function($provide){
@@ -66,9 +83,9 @@ describe('Directive sdcoEditorTab', function(){
 
 	it('Check installEditor is called with needed args', function(){
 
-		expect(mockSdcoEditorService.installEditor).toHaveBeenCalled();
+		expect(directiveCtrlMocks.installEditor).toHaveBeenCalled();
 
-		var lastCall= mockSdcoEditorService.installEditor.calls.mostRecent(),
+		var lastCall= directiveCtrlMocks.installEditor.calls.mostRecent(),
 			args= lastCall.args,
 			content= args[1], 
 			type= args[2];

@@ -1,12 +1,12 @@
 angular.module('sdco-tools.directives')
- .factory('editorTabLinkFn', ['sdcoEditorService', function(sdcoEditorService){
+ .factory('editorTabLinkFn', [function(){
 
  	return function(initialEditorContent){
 
 		return function($scope, element, attrs, editorCtrl){
 			var currentId= editorCtrl.getNbEditors();
 			var readOnly= editorCtrl.getScope().readOnly;
-			$scope.editor= sdcoEditorService.installEditor(
+			$scope.editor= editorCtrl.installEditor(
 				element[0].querySelector('.editorElement'),
 				initialEditorContent,
 				$scope.type,

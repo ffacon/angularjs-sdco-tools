@@ -22,7 +22,7 @@
 10 error There is likely additional logging output above.
 11 error System Windows_NT 6.1.7601
 12 error command "c:\\Program Files\\nodejs\\node.exe" "c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "run" "dist"
-13 error cwd c:\more\work\javascript\angular\perso\sdco-tools
+13 error cwd c:\more\work\javascript\angular\sdco-tools
 14 error node -v v0.10.35
 15 error npm -v 1.4.28
 16 error code ELIFECYCLE

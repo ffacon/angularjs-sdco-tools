@@ -15,17 +15,33 @@
 
 		<!-- view1 -->
 		<script type="text/ng-template" id="view1.html">
-			<sdco-editor compile="true" compile-on-demand="true" width="800px" height="300px" js-fiddle="false">
-				<sdco-editor-tab type="html" heading="sample.html">
-&lt;div&gt;
-{{'toto'}}
-&lt;p id="afterCompile"&gt;text&lt;/p&gt;
-&lt;/div&gt;
-				</sdco-editor-tab>
-				<sdco-editor-tab type="javascript" heading="sample.js">
-document.getElementById('afterCompile').innerText='modified';
-				</sdco-editor-tab>
-			</sdco-editor>			
+			<div id="editor1">
+				<sdco-editor compile="true" compile-on-demand="true" width="800px" height="300px" js-fiddle="false">
+					<sdco-editor-tab type="html" heading="sample.html">
+	&lt;div&gt;
+	{{'toto'}}
+	&lt;p id="afterCompile1"&gt;text&lt;/p&gt;
+	&lt;/div&gt;
+					</sdco-editor-tab>
+					<sdco-editor-tab type="javascript" heading="sample.js">
+	document.getElementById('afterCompile1').innerText='modified';
+					</sdco-editor-tab>
+				</sdco-editor>
+			</div>
+
+			<div id="editor2">
+				<sdco-editor width="800px" height="300px" hide-menu="true">
+					<sdco-editor-tab type="html" heading="sample.html">
+	&lt;div&gt;
+	{{'toto'}}
+	&lt;p id="afterCompile2"&gt;text&lt;/p&gt;
+	&lt;/div&gt;
+					</sdco-editor-tab>
+					<sdco-editor-tab type="javascript" heading="sample.js">
+	document.getElementById('afterCompile2').innerText='modified';
+					</sdco-editor-tab>
+				</sdco-editor>	
+			</div>			
 		</script>
 
 		<!-- view1 -->
