@@ -1,6 +1,6 @@
 {
   "name": "angular-sdco-tools",
-  "version": "1.0.1",
+  "version": "1.0.2-SNAPSHOT",
   "author":{
     "name" : "Legrand Régis",
     "email" : "regis.legrand@worldline.com"
