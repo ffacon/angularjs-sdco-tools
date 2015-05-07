@@ -46,7 +46,7 @@ NG_DOCS={
       "type": "directive",
       "moduleName": "sdco-tools",
       "shortDescription": "Defines a new editor container, used in conjunction with",
-      "keywords": "add api applied asked behavior button case cases changes compilation compile compileondemand concatenated conjunction container content css default define defines depends directive displayed editor executed height html js jsfiddle link menu option play preview previous processed sdco-tools sdcoeditortab set specific tabs time top true user width zone"
+      "keywords": "active add allowed api applied asked behavior button case cases changes compilation compile compileondemand concatenated conjunction container content css default define defines depends directive display displayed editor executed false height hide html js jsfiddle link menu mode modifications option play preview previous processed readonly sdco-tools sdcoeditortab set specific tabs time top true typically user width zone"
     },
     {
       "section": "api",
