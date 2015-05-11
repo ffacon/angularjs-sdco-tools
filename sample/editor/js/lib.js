@@ -948,7 +948,7 @@ angular.module('sdco-tools.directives')
 .factory('sdcoEditorLinkFn', ['sdcoEditorService', function(sdcoEditorService){
  	return function($scope, $element, $attrs, $controller, $transclude){
 
- 		var sdcoEditorServiceInstance= sdcoEditorService.getInstance();
+ 		var sdcoEditorServiceInstance= $scope.sdcoEditorServiceInstance;
 
 		//Check transclude is done and then
 		// process editor content if needed
@@ -1025,7 +1025,8 @@ angular.module('sdco-tools.directives')
 
 		var urlInd= 0;
 
-		var sdcoEditorServiceInstance= sdcoEditorService.getInstance();
+		//Create new service instance and make it available in the scope
+		var sdcoEditorServiceInstance= $scope.sdcoEditorServiceInstance= sdcoEditorService.getInstance();
 
 		$scope.preprocess= function(){
 			$scope.contents= sdcoEditorServiceInstance.run();
