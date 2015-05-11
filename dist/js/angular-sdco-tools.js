@@ -22,494 +22,6 @@ angular.module('sdco-tools', [
 	'sdco-tools.directives', 'sdco-tools.services',
 	'ngSanitize', 'ui.bootstrap'
 ]);
-angular.module('sdco-tools.services', ['ngSanitize']);
-
-/**
- * @ngdoc service
- * @name sdco-tools.service:sdcoEditorService
- *
- * @description
- * 
- * <p> 
- * 	This service is used internally to help
- *	{@link sdco-tools.directive:sdcoEditor sdo-editor} directive behavior
- * </p>
- *
- * <p> This service shouldn't be used out of {@link sdco-tools this module} </p>
- **/
-
- /**
- * @ngdoc service
- * @name sdco-tools.service:sdcoEditorServiceProvider
- *
- * @description
- * Provider of {@link sdco-tools.service:sdcoEditorService sdcoEditorService}
- * 
- **/
-angular.module('sdco-tools.services')
-.provider('sdcoEditorService', function(){
-
-	/**
-	* @ngdoc property
-	* @name isStorageActive
-	* @propertyOf sdco-tools.service:sdcoEditorServiceProvider
-	* @description
-	* <p>
-	* Specify if the editors content should be stored or not.
-	* If true, it will be stored in the data attribute of the body element.
-	* This is usefull when you have different views and want to keep the
-	* editor content when switching over views.
-	* It is <b>false</b> by default.
-	* </p>
-	*
-	* @example
-	* <pre>
-	* angular.module('yourMpdule', ['sdco-tools'])
-	* .config(['sdcoEditorServiceProvider', 
-	*   function(sdcoEditorServiceProvider){
-	*  sdcoEditorServiceProvider.isStorageActive= true;
-	*  ...
-	* </pre>
-	**/
-	this.isStorageActive= false;
-	var provider= this;
-
-	var editorServiceImpl= function($log, $location, $rootScope, isStorageActive, instanceId){
-
-			var installedEditors={};
-
-			var getStoreKey= function(value){
-				return 'sdcoEditor' + value + instanceId;
-			};
-
-			var getJsonDesc= function(){ 
-
-				var res= [];
-
-				angular.forEach(installedEditors, function(currentEditor, index){
-
-					var currentMode= currentEditor.getOption('mode');
-					var currentContent= currentEditor.getValue();
-
-					res.push({id: index, content: currentContent});
-				});
-
-				return res;
-			};
-
-
-			this.store= function(current){
-				var storeKey= getStoreKey(current);
-				angular.element(document.querySelector('body')).data(storeKey, getJsonDesc());
-				installedEditors= {};				
-			};
-
-
-			var getPreviousState= function(){
-				var storeKey= getStoreKey($location.absUrl());
-				return angular.element(document.querySelector('body')).data(storeKey);
-			};
-
-			/**
-			* @ngdoc method
-			* @name installEditor
-			* @methodOf sdco-tools.service:sdcoEditorService
-			* @description
-			* Store an editor instance and to install it on the specified element
-			* with the specified content.
-			* 
-			* @param {Element} theElement the element to install the editor to
-			* @param {String} content the content to display in the editor
-			* @param {String} type the content type, which has to be one of 
-			* <b>javascript</b>, <b>html</b>, <b>css</b>
-			*
-			* @param {String} id the id of the editor. Typically, its indice in the page, which is 1
-			* if it appears first in the page, 2 if its the second, ... Information needed to store
-			* and retrieve its content based on the view when needed.
-			*
-			* @param {Boolean} readOnly specifies if the editor should be in read-only mode
-			**/
-			this.installEditor= function(theElement, content, type, id, readOnly)
-			{
-				//Check if an instance exists
-				if (isStorageActive){
-					var previousState= getPreviousState();
-					var storedContent= previousState && previousState[id] && previousState[id].content;
-					if (storedContent){ 
-						content= storedContent;
-					}
-				}
-
-				//Otherwise install new instance
-				var options= {
-					value: content,
-					mode:{},
-					lineNumbers:'true',
-					theme:'eclipse',
-					lineWrapping: true,
-					readOnly: readOnly
-				};
-
-				switch(type){
-					case 'javascript':
-						options.mode.name='javascript';
-					break;
-					case 'html':
-						options.mode.name='xml';
-						options.htmlMode= true;
-					break;
-					case 'css':
-						options.mode.name='css';
-					break;
-					default://TODO
-					break;
-				}
-
-				editor= CodeMirror(theElement, options);
-
-				//Stop keydown events propagation
-				angular.element(editor.getWrapperElement()).on('keydown',function(e){
-					e.stopPropagation();
-				});
-
-				installedEditors[id]= editor;
-
-				return editor;
-			};
-
-			/**
-			* @ngdoc method
-			* @name getInstalledEditors
-			* @methodOf sdco-tools.service:sdcoEditorService
-			* @description
-			* Get installed editors (in the current view)
-			* 
-			* @returns {Array} an array of editor instances installed in the current view
-			**/
-			this.getInstalledEditors= function(){
-				return installedEditors;
-			};
-
-			this.setInstalledEditors= function(editors){
-				installedEditors= editors;
-			}
-
-			/**
-			* @ngdoc method
-			* @name removeEditor
-			* @methodOf sdco-tools.service:sdcoEditorService
-			* @description
-			* Remove an installed editor instance (both in the DOM and in the array referencing all instances)
-			* 
-			* @param {Object} editor the editor instance to remove
-			**/
-			this.removeEditor= function(editor){
-				var that= this;
-				angular.forEach(installedEditors, function(currentEditor, index){
-					if (editor == currentEditor){
-						angular.element(editor.getWrapperElement()).remove();
-						delete installedEditors[index];
-						return false;
-					}
-				});
-			};
-
-			/**
-			* @ngdoc method
-			* @name run
-			* @methodOf sdco-tools.service:sdcoEditorService
-			* @description
-			* Get the content of installed editors aggregated by type
-			* 
-			* @returns {Object} an object containing one field by editor type, whose value
-			* is the aggregation of editors contents of this type.
-			* <pre>
-			* {javascript:'all js content', css:'all css content', xml: 'all xml content'}
-			* </pre>
-			**/
-			this.run= function(){
-
-				var that= this;
-
-				//Returns data by type
-				var javascript='', html='', css='';
-				angular.forEach(installedEditors, function(currentEditor, index){
-
-					var currentMode= currentEditor.getOption('mode');
-					var isHtml= currentEditor.getOption('htmlMode');
-
-
-					if (currentMode.name == 'javascript'){
-						javascript+= currentEditor.getValue();
-					}
-					else if (currentMode.name == 'css'){
-						css+= currentEditor.getValue();
-					}
-					else if (currentMode.name == 'xml' && isHtml ){
-						html+= currentEditor.getValue();
-					}
-				});
-
-				return{
-					javascript: javascript,
-					html: html,
-					css: css
-				};
-			};
-	};
-
-
-
-	//Get the service
-	this.$get=['$log', '$location', '$rootScope', 
-		function($log, $location, $rootScope){
-
-			//The service instances for a view
-			var viewInstances= [];
-
-			var updateViewState= function(){
-				$rootScope.$on('$locationChangeStart', function(event, next, current){
-
-					//When the view changes, clear instances
-					//And if storage mode is active, save data
-
-					if (provider.isStorageActive){
-						for (var i in viewInstances){
-							var instance= viewInstances[i];
-							instance.store(current);
-						}
-					}
-
-					viewInstances= [];
-				});
-			};
-
-			//Do we need to activate auto saving
-			updateViewState();
-
-			return {
-				getInstance: function(){
-					var newInstance= new editorServiceImpl($log, $location, $rootScope, provider.isStorageActive, viewInstances.length);
-					if (provider.isStorageActive){
-						viewInstances.push(newInstance);
-					}
-					return newInstance;
-				}
-			};
-
-
-
-			
-		}
-	];
-
-
-});
-angular.module('sdco-tools.services')
-.value('sdcoLocalStorageService', localStorage);
-/**
- * @ngdoc service
- * @name sdco-tools.service:sdcoNotesService
- *
- * @description
- * 
- * <p> 
- * 	This service is used internally to help
- *	{@link sdco-tools.directive:sdcoNotes sdoNotes} and 
- * {@link sdco-tools.directive:sdcoNotesExport sdoNotesExport} 
- * directives behavior.
- * </p>
- *
- * <p> This service shouldn't be used out of {@link sdco-tools this module} </p>
- **/
-angular.module('sdco-tools.services')
-.service('sdcoNotesService', ['$rootScope', '$location', 'sdcoLocalStorageService',
- function($rootScope, $location, localStorage){
-
-	this.commonPrefixKey= 'notes_export';
-	this.unitPrefixKey= this.commonPrefixKey + '_unit';
-	this.currentIndice= 0;
-	this.unitMainKey= undefined;
-	this.notes= [];
-	this.globalPrefixKey= this.commonPrefixKey + '_globalNote';
-	this.globalNote= '';
-
-	/**
-	* @ngdoc method
-	* @name getViewKey
-	* @methodOf sdco-tools.service:sdcoNotesService
-	* @description
-	* Store an editor instance and to install it on the specified element
-	* with the specified content.
-	* 
-	*
-	* @returns {String} the key which will be used to store/retrieve
-	* a note in/from the localStorage.
-	**/
-	this.getViewKey= function(){
-		return this.unitPrefixKey + this.unitMainKey;
-	};
-
-	/**
-	* @ngdoc method
-	* @name exportNotes
-	* @methodOf sdco-tools.service:sdcoNotesService
-	* @description
-	* Get an array containing all the notes saved in the app.
-	*
-	* @returns {Array} all the notes saved in the app
-	**/
-	this.exportNotes= function(){
-		var res= [];
-		var regex= new RegExp(this.commonPrefixKey, 'i');
-		for(var key in localStorage){
-			var matches= key.match(regex);
-			if (matches){
-				res.push({key:key,note:localStorage[key]});
-			}
-		}
-
-		return res;
-	};
-
-	/**
-	* @ngdoc method
-	* @name importNotes
-	* @methodOf sdco-tools.service:sdcoNotesService
-	* @description
-	* Import (in the local storage) all notes in parameter
-	*
-	* @param {Array} notes the notes to import
-	**/
-	this.importNotes= function(notes){
-
-		for (var id in notes){
-			var entry= notes[id];
-			localStorage.setItem(entry.key, entry.note);
-			if (entry.key === this.globalPrefixKey){
-				this.globalNote= entry.note;
-			}
-		}
-	};
-
-	/**
-	* @ngdoc method
-	* @name loadViewNotes
-	* @methodOf sdco-tools.service:sdcoNotesService
-	* @description
-	* Locally loads notes used in the current view
-	**/
-	this.loadViewNotes= function(){
-		var tmpbfr= [];
-		var regex= new RegExp(this.getViewKey() + '_\\d', 'i');
-		for(var key in localStorage){
-			var matches= key.match(regex);
-			if (matches){
-				var indice= parseInt(matches[0].substring(matches[0].length - 1));
-				tmpbfr.push({id: indice, note:localStorage[key]});
-			}
-		}
-
-		this.notes.length= tmpbfr.length;
-		for(var i in tmpbfr){
-			this.notes[tmpbfr[i].id]= tmpbfr[i].note;
-		}
-	};
-
-	/**
-	* @ngdoc method
-	* @name loadGlobalNote
-	* @methodOf sdco-tools.service:sdcoNotesService
-	* @description
-	* Locally loads global notes (accessibles in any view)
-	**/
-	this.loadGlobalNote= function(){
-		//Is it already loaded
-		if (this.globalNote.trim() !== ''){
-			return this.globalNote;
-		}
-		//Retrieve from localStorage
-		else{
-			var globalNote= localStorage[this.globalPrefixKey];
-			if (globalNote){
-				this.globalNote= globalNote;
-			}
-		}
-	};	
-
-	/**
-	* @ngdoc method
-	* @name getNote
-	* @methodOf sdco-tools.service:sdcoNotesService
-	* @description
-	* Get information about a note. Will be the first note for this view
-	* for the first call of the function, the second note for the second call, and so on.
-	*
-	* @returns {Object} An object containing the id (or position) of the note, 
-	* and its content.
-	**/
-	this.getNote= function(){
-		var res= {id: this.currentIndice, note: this.notes[this.currentIndice]};
-		this.currentIndice++;
-		return res;
-	};
-
-	/**
-	* @ngdoc method
-	* @name getGlobalNote
-	* @methodOf sdco-tools.service:sdcoNotesService
-	* @description
-	* Get the global note content
-	*
-	* @returns {Object} An object with the global note content.
-	**/
-	this.getGlobalNote= function(){
-		return {note: this.globalNote};
-	};
-
-	/**
-	* @ngdoc method
-	* @name saveNote
-	* @methodOf sdco-tools.service:sdcoNotesService
-	* @description
-	* Save a new local or global note.
-	*
-	* @param {Object} the note to save
-	**/
-	this.saveNote= function(noteData){
-		//Local note depending on the route
-		if (noteData.id!==undefined){
-			this.notes[noteData.id]= noteData.note;
-			localStorage.setItem(this.getViewKey() + '_' + noteData.id, noteData.note);
-		}
-		//Global note for the app
-		else{
-			this.globalNote= noteData.note;
-			localStorage.setItem(this.globalPrefixKey, noteData.note);
-		}
-	};
-
-	/**
-	* @ngdoc method
-	* @name init
-	* @methodOf sdco-tools.service:sdcoNotesService
-	* @description
-	* Listen view changes to update needed data
-	**/
-	this.init= function(){
-		var that= this;
-		$rootScope.$on('$locationChangeSuccess', function(event, next, current){
-			var viewId= $location.url();
-			that.unitMainKey= viewId;
-			that.currentIndice= 0;
-			that.loadViewNotes();
-			that.loadGlobalNote();
-		});
-	};
-
-	this.init();
-
-}]);
 angular.module('sdco-tools.directives', ['ui.bootstrap', 'sdco-tools.services']);
 angular.module('sdco-tools.directives')
 
@@ -1278,3 +790,492 @@ angular.module('sdco-tools.directives')
 		}
 	}
 });
+
+angular.module('sdco-tools.services', ['ngSanitize']);
+
+/**
+ * @ngdoc service
+ * @name sdco-tools.service:sdcoEditorService
+ *
+ * @description
+ * 
+ * <p> 
+ * 	This service is used internally to help
+ *	{@link sdco-tools.directive:sdcoEditor sdo-editor} directive behavior
+ * </p>
+ *
+ * <p> This service shouldn't be used out of {@link sdco-tools this module} </p>
+ **/
+
+ /**
+ * @ngdoc service
+ * @name sdco-tools.service:sdcoEditorServiceProvider
+ *
+ * @description
+ * Provider of {@link sdco-tools.service:sdcoEditorService sdcoEditorService}
+ * 
+ **/
+angular.module('sdco-tools.services')
+.provider('sdcoEditorService', function(){
+
+	/**
+	* @ngdoc property
+	* @name isStorageActive
+	* @propertyOf sdco-tools.service:sdcoEditorServiceProvider
+	* @description
+	* <p>
+	* Specify if the editors content should be stored or not.
+	* If true, it will be stored in the data attribute of the body element.
+	* This is usefull when you have different views and want to keep the
+	* editor content when switching over views.
+	* It is <b>false</b> by default.
+	* </p>
+	*
+	* @example
+	* <pre>
+	* angular.module('yourMpdule', ['sdco-tools'])
+	* .config(['sdcoEditorServiceProvider', 
+	*   function(sdcoEditorServiceProvider){
+	*  sdcoEditorServiceProvider.isStorageActive= true;
+	*  ...
+	* </pre>
+	**/
+	this.isStorageActive= false;
+	var provider= this;
+
+	var editorServiceImpl= function($log, $location, $rootScope, isStorageActive, instanceId){
+
+			var installedEditors={};
+
+			var getStoreKey= function(value){
+				return 'sdcoEditor' + value + instanceId;
+			};
+
+			var getJsonDesc= function(){ 
+
+				var res= [];
+
+				angular.forEach(installedEditors, function(currentEditor, index){
+
+					var currentMode= currentEditor.getOption('mode');
+					var currentContent= currentEditor.getValue();
+
+					res.push({id: index, content: currentContent});
+				});
+
+				return res;
+			};
+
+
+			this.store= function(current){
+				var storeKey= getStoreKey(current);
+				angular.element(document.querySelector('body')).data(storeKey, getJsonDesc());
+				installedEditors= {};				
+			};
+
+
+			var getPreviousState= function(){
+				var storeKey= getStoreKey($location.absUrl());
+				return angular.element(document.querySelector('body')).data(storeKey);
+			};
+
+			/**
+			* @ngdoc method
+			* @name installEditor
+			* @methodOf sdco-tools.service:sdcoEditorService
+			* @description
+			* Store an editor instance and to install it on the specified element
+			* with the specified content.
+			* 
+			* @param {Element} theElement the element to install the editor to
+			* @param {String} content the content to display in the editor
+			* @param {String} type the content type, which has to be one of 
+			* <b>javascript</b>, <b>html</b>, <b>css</b>
+			*
+			* @param {String} id the id of the editor. Typically, its indice in the page, which is 1
+			* if it appears first in the page, 2 if its the second, ... Information needed to store
+			* and retrieve its content based on the view when needed.
+			*
+			* @param {Boolean} readOnly specifies if the editor should be in read-only mode
+			**/
+			this.installEditor= function(theElement, content, type, id, readOnly)
+			{
+				//Check if an instance exists
+				if (isStorageActive){
+					var previousState= getPreviousState();
+					var storedContent= previousState && previousState[id] && previousState[id].content;
+					if (storedContent){ 
+						content= storedContent;
+					}
+				}
+
+				//Otherwise install new instance
+				var options= {
+					value: content,
+					mode:{},
+					lineNumbers:'true',
+					theme:'eclipse',
+					lineWrapping: true,
+					readOnly: readOnly
+				};
+
+				switch(type){
+					case 'javascript':
+						options.mode.name='javascript';
+					break;
+					case 'html':
+						options.mode.name='xml';
+						options.htmlMode= true;
+					break;
+					case 'css':
+						options.mode.name='css';
+					break;
+					default://TODO
+					break;
+				}
+
+				editor= CodeMirror(theElement, options);
+
+				//Stop keydown events propagation
+				angular.element(editor.getWrapperElement()).on('keydown',function(e){
+					e.stopPropagation();
+				});
+
+				installedEditors[id]= editor;
+
+				return editor;
+			};
+
+			/**
+			* @ngdoc method
+			* @name getInstalledEditors
+			* @methodOf sdco-tools.service:sdcoEditorService
+			* @description
+			* Get installed editors (in the current view)
+			* 
+			* @returns {Array} an array of editor instances installed in the current view
+			**/
+			this.getInstalledEditors= function(){
+				return installedEditors;
+			};
+
+			this.setInstalledEditors= function(editors){
+				installedEditors= editors;
+			}
+
+			/**
+			* @ngdoc method
+			* @name removeEditor
+			* @methodOf sdco-tools.service:sdcoEditorService
+			* @description
+			* Remove an installed editor instance (both in the DOM and in the array referencing all instances)
+			* 
+			* @param {Object} editor the editor instance to remove
+			**/
+			this.removeEditor= function(editor){
+				var that= this;
+				angular.forEach(installedEditors, function(currentEditor, index){
+					if (editor == currentEditor){
+						angular.element(editor.getWrapperElement()).remove();
+						delete installedEditors[index];
+						return false;
+					}
+				});
+			};
+
+			/**
+			* @ngdoc method
+			* @name run
+			* @methodOf sdco-tools.service:sdcoEditorService
+			* @description
+			* Get the content of installed editors aggregated by type
+			* 
+			* @returns {Object} an object containing one field by editor type, whose value
+			* is the aggregation of editors contents of this type.
+			* <pre>
+			* {javascript:'all js content', css:'all css content', xml: 'all xml content'}
+			* </pre>
+			**/
+			this.run= function(){
+
+				var that= this;
+
+				//Returns data by type
+				var javascript='', html='', css='';
+				angular.forEach(installedEditors, function(currentEditor, index){
+
+					var currentMode= currentEditor.getOption('mode');
+					var isHtml= currentEditor.getOption('htmlMode');
+
+
+					if (currentMode.name == 'javascript'){
+						javascript+= currentEditor.getValue();
+					}
+					else if (currentMode.name == 'css'){
+						css+= currentEditor.getValue();
+					}
+					else if (currentMode.name == 'xml' && isHtml ){
+						html+= currentEditor.getValue();
+					}
+				});
+
+				return{
+					javascript: javascript,
+					html: html,
+					css: css
+				};
+			};
+	};
+
+
+
+	//Get the service
+	this.$get=['$log', '$location', '$rootScope', 
+		function($log, $location, $rootScope){
+
+			//The service instances for a view
+			var viewInstances= [];
+
+			var updateViewState= function(){
+				$rootScope.$on('$locationChangeStart', function(event, next, current){
+
+					//When the view changes, clear instances
+					//And if storage mode is active, save data
+
+					if (provider.isStorageActive){
+						for (var i in viewInstances){
+							var instance= viewInstances[i];
+							instance.store(current);
+						}
+					}
+
+					viewInstances= [];
+				});
+			};
+
+			//Do we need to activate auto saving
+			updateViewState();
+
+			return {
+				getInstance: function(){
+					var newInstance= new editorServiceImpl($log, $location, $rootScope, provider.isStorageActive, viewInstances.length);
+					if (provider.isStorageActive){
+						viewInstances.push(newInstance);
+					}
+					return newInstance;
+				}
+			};
+
+
+
+			
+		}
+	];
+
+
+});
+angular.module('sdco-tools.services')
+.value('sdcoLocalStorageService', localStorage);
+/**
+ * @ngdoc service
+ * @name sdco-tools.service:sdcoNotesService
+ *
+ * @description
+ * 
+ * <p> 
+ * 	This service is used internally to help
+ *	{@link sdco-tools.directive:sdcoNotes sdoNotes} and 
+ * {@link sdco-tools.directive:sdcoNotesExport sdoNotesExport} 
+ * directives behavior.
+ * </p>
+ *
+ * <p> This service shouldn't be used out of {@link sdco-tools this module} </p>
+ **/
+angular.module('sdco-tools.services')
+.service('sdcoNotesService', ['$rootScope', '$location', 'sdcoLocalStorageService',
+ function($rootScope, $location, localStorage){
+
+	this.commonPrefixKey= 'notes_export';
+	this.unitPrefixKey= this.commonPrefixKey + '_unit';
+	this.currentIndice= 0;
+	this.unitMainKey= undefined;
+	this.notes= [];
+	this.globalPrefixKey= this.commonPrefixKey + '_globalNote';
+	this.globalNote= '';
+
+	/**
+	* @ngdoc method
+	* @name getViewKey
+	* @methodOf sdco-tools.service:sdcoNotesService
+	* @description
+	* Store an editor instance and to install it on the specified element
+	* with the specified content.
+	* 
+	*
+	* @returns {String} the key which will be used to store/retrieve
+	* a note in/from the localStorage.
+	**/
+	this.getViewKey= function(){
+		return this.unitPrefixKey + this.unitMainKey;
+	};
+
+	/**
+	* @ngdoc method
+	* @name exportNotes
+	* @methodOf sdco-tools.service:sdcoNotesService
+	* @description
+	* Get an array containing all the notes saved in the app.
+	*
+	* @returns {Array} all the notes saved in the app
+	**/
+	this.exportNotes= function(){
+		var res= [];
+		var regex= new RegExp(this.commonPrefixKey, 'i');
+		for(var key in localStorage){
+			var matches= key.match(regex);
+			if (matches){
+				res.push({key:key,note:localStorage[key]});
+			}
+		}
+
+		return res;
+	};
+
+	/**
+	* @ngdoc method
+	* @name importNotes
+	* @methodOf sdco-tools.service:sdcoNotesService
+	* @description
+	* Import (in the local storage) all notes in parameter
+	*
+	* @param {Array} notes the notes to import
+	**/
+	this.importNotes= function(notes){
+
+		for (var id in notes){
+			var entry= notes[id];
+			localStorage.setItem(entry.key, entry.note);
+			if (entry.key === this.globalPrefixKey){
+				this.globalNote= entry.note;
+			}
+		}
+	};
+
+	/**
+	* @ngdoc method
+	* @name loadViewNotes
+	* @methodOf sdco-tools.service:sdcoNotesService
+	* @description
+	* Locally loads notes used in the current view
+	**/
+	this.loadViewNotes= function(){
+		var tmpbfr= [];
+		var regex= new RegExp(this.getViewKey() + '_\\d', 'i');
+		for(var key in localStorage){
+			var matches= key.match(regex);
+			if (matches){
+				var indice= parseInt(matches[0].substring(matches[0].length - 1));
+				tmpbfr.push({id: indice, note:localStorage[key]});
+			}
+		}
+
+		this.notes.length= tmpbfr.length;
+		for(var i in tmpbfr){
+			this.notes[tmpbfr[i].id]= tmpbfr[i].note;
+		}
+	};
+
+	/**
+	* @ngdoc method
+	* @name loadGlobalNote
+	* @methodOf sdco-tools.service:sdcoNotesService
+	* @description
+	* Locally loads global notes (accessibles in any view)
+	**/
+	this.loadGlobalNote= function(){
+		//Is it already loaded
+		if (this.globalNote.trim() !== ''){
+			return this.globalNote;
+		}
+		//Retrieve from localStorage
+		else{
+			var globalNote= localStorage[this.globalPrefixKey];
+			if (globalNote){
+				this.globalNote= globalNote;
+			}
+		}
+	};	
+
+	/**
+	* @ngdoc method
+	* @name getNote
+	* @methodOf sdco-tools.service:sdcoNotesService
+	* @description
+	* Get information about a note. Will be the first note for this view
+	* for the first call of the function, the second note for the second call, and so on.
+	*
+	* @returns {Object} An object containing the id (or position) of the note, 
+	* and its content.
+	**/
+	this.getNote= function(){
+		var res= {id: this.currentIndice, note: this.notes[this.currentIndice]};
+		this.currentIndice++;
+		return res;
+	};
+
+	/**
+	* @ngdoc method
+	* @name getGlobalNote
+	* @methodOf sdco-tools.service:sdcoNotesService
+	* @description
+	* Get the global note content
+	*
+	* @returns {Object} An object with the global note content.
+	**/
+	this.getGlobalNote= function(){
+		return {note: this.globalNote};
+	};
+
+	/**
+	* @ngdoc method
+	* @name saveNote
+	* @methodOf sdco-tools.service:sdcoNotesService
+	* @description
+	* Save a new local or global note.
+	*
+	* @param {Object} the note to save
+	**/
+	this.saveNote= function(noteData){
+		//Local note depending on the route
+		if (noteData.id!==undefined){
+			this.notes[noteData.id]= noteData.note;
+			localStorage.setItem(this.getViewKey() + '_' + noteData.id, noteData.note);
+		}
+		//Global note for the app
+		else{
+			this.globalNote= noteData.note;
+			localStorage.setItem(this.globalPrefixKey, noteData.note);
+		}
+	};
+
+	/**
+	* @ngdoc method
+	* @name init
+	* @methodOf sdco-tools.service:sdcoNotesService
+	* @description
+	* Listen view changes to update needed data
+	**/
+	this.init= function(){
+		var that= this;
+		$rootScope.$on('$locationChangeSuccess', function(event, next, current){
+			var viewId= $location.url();
+			that.unitMainKey= viewId;
+			that.currentIndice= 0;
+			that.loadViewNotes();
+			that.loadGlobalNote();
+		});
+	};
+
+	this.init();
+
+}]);
